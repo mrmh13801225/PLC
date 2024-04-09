@@ -23,23 +23,25 @@ comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
 pattern : patternDeclaration (CASE condition ASSIGN value)+ SEMICOLON;
 
-patternDeclaration : PATTERN IDENTIFIER LPAR (args) RPAR;
+patternDeclaration : PATTERN IDENTIFIER LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
-args : normalArgs LBRACKET dfaultArgs RBRACKET ;
+declerationArgs : normalArgs (LBRACKET defaultArgs RBRACKET)? ;
 
-normalArgs : arg | arg COMMA ;
+normalArgs : (arg COMMA?)* ;
 
 arg : IDENTIFIER ;
 
-defaultArgs : arg ASSIGN directValue | arg ASSIGN directValue COMMA;
+defaultArgs : (arg ASSIGN directValue COMMA?)*;
 
 directValue : INT_VAL | STRING_VAL | FLOAT_VAL | TRUE | FALSE ;
 
 condition : ;
 
-value : ;
+value : expresion ;
 
-function : FUNCTION IDENTIFIER LPAR (args) RPAR body END_OF_SCOPE;
+expresion : IDENTIFIER operator expresion | IDENTIFIER | directValue operator expresion | directValue ;//should be checked and completed!
+
+function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body END_OF_SCOPE;
 
 body :  ;
 
