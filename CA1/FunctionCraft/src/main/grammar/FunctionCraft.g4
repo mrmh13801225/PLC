@@ -57,7 +57,7 @@ function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body END_OF_SCOPE;
 
 body : (statement | comment)* ;
 
-statement : ifStatement | loopDo | forLoop;
+statement : ifStatement | loopDo | forLoop | builtIn;
 
 // IF-ELSEIF-ELSE RULES:
 
@@ -79,7 +79,21 @@ forLoop : FOR IDENTIFIER IN (IDENTIFIER | range) body END_OF_SCOPE ;
 
 range : LPAR intVal DOT DOT INT_VAL RPAR ;
 
+// BUILTIN FUCNTIONS :
 
+builtIn : chop | chomp | len | puts | push;
+
+chop : (IDENTIFIER ASSIGN)? CHOP LPAR (IDENTIFIER | STRING_VAL) RPAR SEMICOLON;
+
+chomp : (IDENTIFIER ASSIGN)? CHOMP LPAR (IDENTIFIER | STRING_VAL) RPAR SEMICOLON;
+
+len : (IDENTIFIER ASSIGN)? LENGTH LPAR (IDENTIFIER | STRING_VAL | list) RPAR SEMICOLON ;
+
+list : LBRACKET (value COMMA)* value? RBRACKET  ;
+
+puts : PUTS LPAR (IDENTIFIER | value) RPAR SEMICOLON ;
+
+push : PUSH LPAR IDENTIFIER COMMA value RPAR SEMICOLON ;
 
 declaration : IDENTIFIER assignment value ;
 
