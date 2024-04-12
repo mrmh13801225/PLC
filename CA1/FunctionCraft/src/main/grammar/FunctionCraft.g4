@@ -33,7 +33,11 @@ arg : IDENTIFIER ;
 
 defaultArgs : (arg ASSIGN directValue COMMA?)*;
 
-directValue : INT_VAL | STRING_VAL | FLOAT_VAL | TRUE | FALSE ;
+intVal : (PLUS | MINUS)? INT_VAL ;
+
+floatVal : (PLUS | MINUS)? FLOAT_VAL ;
+
+directValue : intVal | STRING_VAL | floatVal | TRUE | FALSE ;
 
 condition : ;
 
@@ -41,9 +45,29 @@ value : expresion ;
 
 expresion : IDENTIFIER operator expresion | IDENTIFIER | directValue operator expresion | directValue ;//should be checked and completed!
 
+operator : logicalOperator | arithmaticOperator | relationalOperator ;
+
+logicalOperator : AND | OR | NOT ;
+
+arithmaticOperator : PLUS | MINUS | MULT | DIV | MOD ;
+
+relationalOperator : GEQ | LEQ | GTR | LES | EQL | NEQ ;
+
 function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body END_OF_SCOPE;
 
-body :  ;
+body : (statement | comment)* ;
+
+statement : ifStatement ;
+
+// IF-ELSEIF-ELSE RULES:
+
+ifStatement : ifBlock elseifBlock* (elseBlock | END_OF_SCOPE) ;
+
+ifBlock : IF condition body ;
+
+elseifBlock : ELSEIF condition body ;
+
+elseBlock : ELSE body END_OF_SCOPE;
 
 declaration : IDENTIFIER assignment value ;
 
