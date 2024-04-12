@@ -57,7 +57,7 @@ function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body END_OF_SCOPE;
 
 body : (statement | comment)* ;
 
-statement : ifStatement ;
+statement : ifStatement | loopDo | forLoop;
 
 // IF-ELSEIF-ELSE RULES:
 
@@ -68,6 +68,18 @@ ifBlock : IF condition body ;
 elseifBlock : ELSEIF condition body ;
 
 elseBlock : ELSE body END_OF_SCOPE;
+
+// LOOP-DO RULES :
+
+loopDo : LOOP DO body END_OF_SCOPE;
+
+// FOR-LOOP RULES :
+
+forLoop : FOR IDENTIFIER IN (IDENTIFIER | range) body END_OF_SCOPE ;
+
+range : LPAR intVal DOT DOT INT_VAL RPAR ;
+
+
 
 declaration : IDENTIFIER assignment value ;
 
@@ -159,6 +171,7 @@ RBRACE:    '}';
 COMMA:     ',';
 SEMICOLON: ';';
 CASE:      '\t|' | '    |';
+DOT: '.';
 
 // Other
 
