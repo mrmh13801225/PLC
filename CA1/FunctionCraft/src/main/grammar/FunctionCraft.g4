@@ -41,8 +41,6 @@ floatVal : (PLUS | MINUS)? FLOAT_VAL ;
 
 booleanVal : TRUE | FALSE ;
 
-compare : expression relationalOperator expression; //TODO
-
 directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
 
 // func(a); (function call)
@@ -50,8 +48,14 @@ directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
 // pettern matching call
 // directVal
 // Identifier
-// x = (y < 5)
-expression : IDENTIFIER operator expression | IDENTIFIER | directValue operator expression | directValue ;//should be checked and completed!
+// (y < 5)
+compare : expression relationalOperator expression; //TODO
+value : IDENTIFIER | directValue | functionCall | lamdaCall | compare | append | functionPointer ;
+expression : value ;
+
+functionCall : IDENTIFIER LPAR inputArgs RPAR ;
+
+inputArgs : ((expression COMMA)* expression ) | ;
 
 operator : logicalOperator | arithmaticOperator | relationalOperator ;
 
@@ -67,7 +71,12 @@ lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body RBRACE; //
 
 function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
 
-body : (statement | comment)* ;
+functionPointer : METHOD LPAR COLON IDENTIFIER RPAR ;
+
+lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
+
+
+body : | (statement | comment)+ ;
 
 statement : ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration | expression; //TODO: function call
 
