@@ -21,27 +21,35 @@ program : (function | comment | pattern)* main comment* ;
 
 comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
-pattern : patternDeclaration (CASE condition ASSIGN value)+ SEMICOLON;
+pattern : patternDeclaration (CASE condition ASSIGN expression)+ SEMICOLON;
 
 patternDeclaration : PATTERN IDENTIFIER LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
-declerationArgs : normalArgs (LBRACKET defaultArgs RBRACKET)? ;
+declerationArgs : normalArgs (LBRACKET defaultArgs RBRACKET)? ; //TODO: can bracets be empty?
 
-normalArgs : (arg COMMA?)* ;
+normalArgs : (declerationArg COMMA?)* ;
 
-arg : IDENTIFIER ;
+declerationArg : IDENTIFIER ;   //arg name while decleration
 
-defaultArgs : (arg ASSIGN directValue COMMA?)*;
+defaultArgs : (declerationArg ASSIGN directValue COMMA?)*;
 
 intVal : (PLUS | MINUS)? INT_VAL ;
 
 floatVal : (PLUS | MINUS)? FLOAT_VAL ;
 
-directValue : intVal | STRING_VAL | floatVal | TRUE | FALSE ;
+booleanVal : TRUE | FALSE ;
 
-value : expresion ;
+compare : expression relationalOperator expression; //TODO
 
-expresion : IDENTIFIER operator expresion | IDENTIFIER | directValue operator expresion | directValue ;//should be checked and completed!
+directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
+
+// func(a); (function call)
+// lambda call
+// pettern matching call
+// directVal
+// Identifier
+// x = (y < 5)
+expression : IDENTIFIER operator expression | IDENTIFIER | directValue operator expression | directValue ;//should be checked and completed!
 
 operator : logicalOperator | arithmaticOperator | relationalOperator ;
 
@@ -51,7 +59,7 @@ arithmaticOperator : PLUS | MINUS | MULT | DIV | MOD ;
 
 relationalOperator : GEQ | LEQ | GTR | LES | EQL | NEQ ;
 
-returnStatement: RETURN (value | LAMDA)? SEMICOLON; //TODO: return pointer to a lambda function
+returnStatement: RETURN (expression | LAMDA)? SEMICOLON; //TODO: update due to expression changes
 
 lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body RBRACE; //TODO: cleaner code
 
@@ -59,19 +67,20 @@ function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body returnStatement?
 
 body : (statement | comment)* ;
 
-statement : ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration; //TODO: function call
+statement : ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration | expression; //TODO: function call
 
 // IF-ELSEIF-ELSE RULES:
 
 ifStatement : ifBlock elseifBlock* (elseBlock | END_OF_SCOPE) ;
 
-condition :  value conditionalOperator value;
+//condition :  (value relationalOperator value) ; //TODO: if (1)
+condition :  expression | (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
 
-conditionalOperator: GEQ | LEQ | GTR | LES |EQL | NEQ;
+//conditionalOperator: GEQ | LEQ | GTR | LES |EQL | NEQ;
 
-ifBlock : IF condition body ; //TODO: END_OF_SCOPE???
+ifBlock : IF condition body ;
 
-elseifBlock : ELSEIF condition body; //TODO: END_OF_SCOPE;?
+elseifBlock : ELSEIF condition body;
 
 elseBlock : ELSE body END_OF_SCOPE;
 
@@ -95,13 +104,15 @@ chomp : (IDENTIFIER ASSIGN)? CHOMP LPAR (IDENTIFIER | STRING_VAL) RPAR SEMICOLON
 
 len : (IDENTIFIER ASSIGN)? LENGTH LPAR (IDENTIFIER | STRING_VAL | list) RPAR SEMICOLON ;
 
-list : LBRACKET (value COMMA)* value? RBRACKET  ;
+list : LBRACKET (  | (expression COMMA)* expression) RBRACKET ;
 
-puts : PUTS LPAR (IDENTIFIER | value) RPAR SEMICOLON ;
+puts : PUTS LPAR (IDENTIFIER | expression) RPAR SEMICOLON ;
 
-push : PUSH LPAR IDENTIFIER COMMA value RPAR SEMICOLON ;
+push : PUSH LPAR IDENTIFIER COMMA expression RPAR SEMICOLON ;
 
-declaration : IDENTIFIER assignment value SEMICOLON;
+append: (IDENTIFIER | list | STRING_VAL) (APPEND expression)+ ;
+
+declaration : IDENTIFIER assignment expression SEMICOLON;
 
 assignment : ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN ;
 
@@ -183,6 +194,9 @@ MINUS_ASSIGN: '-=';
 MULT_ASSIGN: '*=';
 DIV_ASSIGN: '/=';
 MOD_ASSIGN: '%=';
+UNARY_INCREMENT: '++';
+UNARY_DECREMENT: '--';
+APPEND: '<<';
 
 // Symbols
 
