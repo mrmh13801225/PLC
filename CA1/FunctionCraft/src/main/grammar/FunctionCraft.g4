@@ -21,17 +21,19 @@ program : (function | comment | pattern)* main comment* ;
 
 comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
-pattern : patternDeclaration (CASE condition ASSIGN expression)+ SEMICOLON;
+pattern : patternDeclaration (('\n' | '\r') CASE condition ASSIGN expression)+ SEMICOLON;
 
 patternDeclaration : PATTERN IDENTIFIER LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
-declerationArgs : normalArgs (LBRACKET defaultArgs RBRACKET)? ; //TODO: can bracets be empty?
+declerationArgs : normalArgs (LBRACKET defaultArgPlural RBRACKET)? ; //TODO: can bracets be empty?
 
-normalArgs : (declerationArg COMMA?)* ;
+normalArgs : ((declerationArg COMMA)* declerationArg) |;
 
 declerationArg : IDENTIFIER ;   //arg name while decleration
 
-defaultArgs : (declerationArg ASSIGN directValue COMMA?)*;
+defaultArg : declerationArg ASSIGN directValue ;
+
+defaultArgPlural : ((defaultArg COMMA)* defaultArg) |  ;
 
 intVal : (PLUS | MINUS)? INT_VAL ;
 
