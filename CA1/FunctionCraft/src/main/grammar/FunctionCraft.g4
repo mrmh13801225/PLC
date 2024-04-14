@@ -16,8 +16,8 @@ grammar FunctionCraft;
 // TODO
 
 // PARSER RULES
-
-functionCraft : (function | comment | pattern)* main comment* ;
+//main function comes after all custome functions
+program : (function | comment | pattern)* main comment* ;
 
 comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
@@ -39,8 +39,6 @@ floatVal : (PLUS | MINUS)? FLOAT_VAL ;
 
 directValue : intVal | STRING_VAL | floatVal | TRUE | FALSE ;
 
-condition : ;
-
 value : expresion ;
 
 expresion : IDENTIFIER operator expresion | IDENTIFIER | directValue operator expresion | directValue ;//should be checked and completed!
@@ -53,19 +51,27 @@ arithmaticOperator : PLUS | MINUS | MULT | DIV | MOD ;
 
 relationalOperator : GEQ | LEQ | GTR | LES | EQL | NEQ ;
 
-function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body END_OF_SCOPE;
+returnStatement: RETURN (value | LAMDA)? SEMICOLON; //TODO: return pointer to a lambda function
+
+lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body RBRACE; //TODO: cleaner code
+
+function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
 
 body : (statement | comment)* ;
 
-statement : ifStatement | loopDo | forLoop | builtIn;
+statement : ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration; //TODO: function call
 
 // IF-ELSEIF-ELSE RULES:
 
 ifStatement : ifBlock elseifBlock* (elseBlock | END_OF_SCOPE) ;
 
-ifBlock : IF condition body ;
+condition :  value conditionalOperator value;
 
-elseifBlock : ELSEIF condition body ;
+conditionalOperator: GEQ | LEQ | GTR | LES |EQL | NEQ;
+
+ifBlock : IF condition body ; //TODO: END_OF_SCOPE???
+
+elseifBlock : ELSEIF condition body; //TODO: END_OF_SCOPE;?
 
 elseBlock : ELSE body END_OF_SCOPE;
 
@@ -95,11 +101,11 @@ puts : PUTS LPAR (IDENTIFIER | value) RPAR SEMICOLON ;
 
 push : PUSH LPAR IDENTIFIER COMMA value RPAR SEMICOLON ;
 
-declaration : IDENTIFIER assignment value ;
+declaration : IDENTIFIER assignment value SEMICOLON;
 
 assignment : ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN ;
 
-main : ;
+main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN BODY");} body returnStatement? END_OF_SCOPE;
 
 // LEXICAL RULES
 
