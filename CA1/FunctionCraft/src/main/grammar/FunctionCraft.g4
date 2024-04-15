@@ -51,13 +51,15 @@ directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
 // (y < 5)
 compare : expression relationalOperator expression; //TODO
 
-value : IDENTIFIER | directValue | functionCall | lamdaCall | compare | append | functionPointer ;
+value : IDENTIFIER | directValue | functionCall | lamdaCall | append | functionPointer ;
 
 expression : value | LPAR expression RPAR | operation ;
 
 operation : ;
 
-functionCall : IDENTIFIER LPAR inputArgs RPAR ;
+functionCall : (IDENTIFIER LPAR inputArgs RPAR) | builtIn ;
+
+patternCall : IDENTIFIER DOT MATCH LPAR inputArgs RPAR ;
 
 inputArgs : ((expression COMMA)* expression ) | ;
 
@@ -100,11 +102,11 @@ elseBlock : ELSE body END_OF_SCOPE;
 
 // LOOP-DO RULES :
 
-loopDo : LOOP DO body END_OF_SCOPE;
+loopDo : LOOP DO loopBody END_OF_SCOPE;
 
 // FOR-LOOP RULES :
 
-forLoop : FOR IDENTIFIER IN (IDENTIFIER | range) body END_OF_SCOPE ;
+forLoop : FOR IDENTIFIER IN (IDENTIFIER | range) loopBody END_OF_SCOPE ;
 
 range : LPAR intVal DOT DOT INT_VAL RPAR ;
 
@@ -125,6 +127,8 @@ nextif : NEXT IF LPAR condition RPAR SEMICOLON ;
 break : BREAK SEMICOLON | breakif ;
 
 breakif : BREAK IF LPAR condition RPAR SEMICOLON ;
+
+loopBody : (statement | comment | ifLoopStatement | break | next)+ ;
 
 // BUILTIN FUCNTIONS :
 
