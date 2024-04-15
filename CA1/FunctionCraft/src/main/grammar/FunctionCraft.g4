@@ -53,8 +53,6 @@ compare : expression relationalOperator expression; //TODO
 
 value : IDENTIFIER | directValue | functionCall | lamdaCall | append | functionPointer | patternCall ;
 
-expression : value | LPAR expression RPAR | operation ;
-
 operation : ;
 
 functionCall : (IDENTIFIER LPAR inputArgs RPAR) | builtIn ;
@@ -146,8 +144,6 @@ puts : PUTS LPAR (IDENTIFIER | expression) RPAR SEMICOLON ;
 
 push : PUSH LPAR IDENTIFIER COMMA expression RPAR SEMICOLON ;
 
-append: expression APPEND expression ;
-
 elementAccess : expression LBRACKET expression RBRACKET ;
 
 declaration : IDENTIFIER assignment expression SEMICOLON;
@@ -155,6 +151,62 @@ declaration : IDENTIFIER assignment expression SEMICOLON;
 assignment : ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN ;
 
 main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN BODY");} body returnStatement? END_OF_SCOPE;
+
+// OPERATORS :
+
+unaryPostfixOperator : PLUS_PLUS | MINUS_MINUS ;
+
+unaryPrefixOperator : MINUS | NOT ;
+
+multDevideRemainderOperator : MULT | DIV | MOD ;
+
+plusMinusOperator : PLUS | MINUS ;
+
+comparisonOperator : LEQ | LES | GEQ | GTR ;
+
+equalityOperator : EQL | NEQ ;
+
+// EXPRESIONS :
+
+expression : append | orExpression ;
+
+orExpression : or | andExpression ;
+
+andExpression : and | equalityExpression ;
+
+equalityExpression : equality | comparisonExpression ;
+
+comparisonExpression : comparison | incrementOrDecrementExpression ;
+
+incrementOrDecrementExpression : incrementOrDecrement | multOrDevideOrRemainderExpression ;
+
+multOrDevideOrRemainderExpression : multOrDevideOrRemainder | unaryPrefixExpression ;
+
+unaryPrefixExpression : unaryPrefix | unaryPostfixExpression ;
+
+unaryPostfixExpression : unaryPostfix | elementAccessExpression ;
+
+elementAccessExpression : elementAccess | parenthesesExpression ;
+
+parenthesesExpression : LPAR expression RPAR ;
+
+unaryPostfix : expression unaryPostfixOperator ;
+
+unaryPrefix : unaryPostfixOperator expression ;
+
+multOrDevideOrRemainder : expression multDevideRemainderOperator expression ;
+
+incrementOrDecrement : expression plusMinusOperator ;
+
+comparison : expression comparisonOperator expression ;
+
+equality : expression equalityOperator expression ;
+
+and : expression AND expression ;
+
+or : expression OR expression ;
+
+append: expression APPEND expression ;
 
 // LEXICAL RULES
 
@@ -208,6 +260,8 @@ MINUS: '-';
 MULT:  '*';
 DIV:   '/';
 MOD:   '%';
+PLUS_PLUS: '++';
+MINUS_MINUS: '--';
 
 // Relational Operators
 
