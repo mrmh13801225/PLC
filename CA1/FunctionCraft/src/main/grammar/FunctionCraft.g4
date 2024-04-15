@@ -53,10 +53,12 @@ compare : expression relationalOperator expression; //TODO
 
 value : IDENTIFIER | directValue | functionCall | lamdaCall | compare | append | functionPointer ;
 
-expression : value | LPAR expression RPAR | expression operator expression ;
+expression : value | LPAR expression RPAR | operation ;
+
+operation : ;
 
 functionCall : IDENTIFIER LPAR inputArgs RPAR ;
-
+[1 , 2 , 3][0]
 inputArgs : ((expression COMMA)* expression ) | ;
 
 operator : logicalOperator | arithmaticOperator | relationalOperator ;
