@@ -58,7 +58,7 @@ expression : value | LPAR expression RPAR | operation ;
 operation : ;
 
 functionCall : IDENTIFIER LPAR inputArgs RPAR ;
-[1 , 2 , 3][0]
+
 inputArgs : ((expression COMMA)* expression ) | ;
 
 operator : logicalOperator | arithmaticOperator | relationalOperator ;
@@ -79,10 +79,9 @@ functionPointer : METHOD LPAR COLON IDENTIFIER RPAR ;
 
 lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
 
-
 body : | (statement | comment)+ ;
 
-statement : ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration | expression; //TODO: function call
+statement : (ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration | expression) SEMICOLON; //TODO: function call
 
 // IF-ELSEIF-ELSE RULES:
 
@@ -108,6 +107,24 @@ loopDo : LOOP DO body END_OF_SCOPE;
 forLoop : FOR IDENTIFIER IN (IDENTIFIER | range) body END_OF_SCOPE ;
 
 range : LPAR intVal DOT DOT INT_VAL RPAR ;
+
+// IF LOOP :
+
+ifLoopStatement : ifLoopBlock elseifLoopBlock* (elseLoopBlock | END_OF_SCOPE) ;
+
+ifLoopBlock : IF condition (body | break | next) ;
+
+elseifLoopBlock : ELSEIF condition (body | break | next) ;
+
+elseLoopBlock : ELSE (body | break | next) END_OF_SCOPE;
+
+next : NEXT SEMICOLON | nextif ;
+
+nextif : NEXT IF LPAR condition RPAR SEMICOLON ;
+
+break : BREAK SEMICOLON | breakif ;
+
+breakif : BREAK IF LPAR condition RPAR SEMICOLON ;
 
 // BUILTIN FUCNTIONS :
 
