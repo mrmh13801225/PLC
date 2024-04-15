@@ -112,11 +112,11 @@ range : LPAR intVal DOT DOT INT_VAL RPAR ;
 
 ifLoopStatement : ifLoopBlock elseifLoopBlock* (elseLoopBlock | END_OF_SCOPE) ;
 
-ifLoopBlock : IF condition (body | break | next) ;
+ifLoopBlock : IF condition loopBody ;
 
-elseifLoopBlock : ELSEIF condition (body | break | next) ;
+elseifLoopBlock : ELSEIF condition loopBody ;
 
-elseLoopBlock : ELSE (body | break | next) END_OF_SCOPE;
+elseLoopBlock : ELSE loopBody END_OF_SCOPE;
 
 next : NEXT SEMICOLON | nextif ;
 
