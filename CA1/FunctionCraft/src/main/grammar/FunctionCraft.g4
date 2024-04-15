@@ -51,7 +51,7 @@ directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
 // (y < 5)
 compare : expression relationalOperator expression; //TODO
 
-value : IDENTIFIER | directValue | functionCall | lamdaCall | append | functionPointer ;
+value : IDENTIFIER | directValue | functionCall | lamdaCall | append | functionPointer | patternCall ;
 
 expression : value | LPAR expression RPAR | operation ;
 
@@ -146,7 +146,9 @@ puts : PUTS LPAR (IDENTIFIER | expression) RPAR SEMICOLON ;
 
 push : PUSH LPAR IDENTIFIER COMMA expression RPAR SEMICOLON ;
 
-append: expression (APPEND expression)+ ;
+append: expression APPEND expression ;
+
+elementAccess : expression LBRACKET expression RBRACKET ;
 
 declaration : IDENTIFIER assignment expression SEMICOLON;
 
