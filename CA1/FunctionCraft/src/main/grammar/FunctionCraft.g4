@@ -21,7 +21,7 @@ program : (function | comment | pattern)* main comment* ;
 
 comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
-pattern : patternDeclaration (('\n' | '\r') CASE condition ASSIGN expression)+ SEMICOLON;
+pattern : patternDeclaration (NEW_LINE CASE condition ASSIGN expression)+ SEMICOLON;
 
 patternDeclaration : PATTERN IDENTIFIER LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
@@ -50,8 +50,10 @@ directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
 // Identifier
 // (y < 5)
 compare : expression relationalOperator expression; //TODO
+
 value : IDENTIFIER | directValue | functionCall | lamdaCall | compare | append | functionPointer ;
-expression : value ;
+
+expression : value | LPAR expression RPAR | expression operator expression ;
 
 functionCall : IDENTIFIER LPAR inputArgs RPAR ;
 
@@ -217,6 +219,7 @@ COMMA:     ',';
 SEMICOLON: ';';
 CASE:      '\t|' | '    |';
 DOT: '.';
+NEW_LINE: '\n' | '\r' ;
 
 // Other
 
