@@ -31,7 +31,7 @@ normalArgs : ((declerationArg COMMA)* declerationArg) |;
 
 declerationArg : IDENTIFIER ;   //arg name while decleration
 
-defaultArg : declerationArg ASSIGN directValue ;
+defaultArg : declerationArg ASSIGN expression ;
 
 defaultArgPlural : ((defaultArg COMMA)* defaultArg) |  ;
 
