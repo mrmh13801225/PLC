@@ -125,7 +125,7 @@ puts : PUTS LPAR (IDENTIFIER | expression) RPAR SEMICOLON ;
 
 push : PUSH LPAR IDENTIFIER COMMA expression RPAR SEMICOLON ;
 
-append: (IDENTIFIER | list | STRING_VAL) (APPEND expression)+ ;
+append: expression (APPEND expression)+ ;
 
 declaration : IDENTIFIER assignment expression SEMICOLON;
 
