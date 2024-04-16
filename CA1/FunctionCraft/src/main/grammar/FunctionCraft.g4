@@ -226,6 +226,7 @@ expr_other
   | functionCall
   | functionPointer
   | lamdaCall
+  | lambdaFuncDecleration
   |patternCall
   ;
 //  | primitive_value
