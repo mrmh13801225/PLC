@@ -1,22 +1,5 @@
 grammar FunctionCraft;
 
-// Lexer rules
-// The lexer rules define patterns for recognizing tokens like numbers, booleans, strings,
-// comments, keywords, identifiers, and operators in the input text. These rules are used
-// by the lexer to break the input into a token stream.
-
-// TODO
-
-// Parser rules
-// The parser rules start with the program rule, which defines the overall structure of a
-// valid program. They then specify how tokens can be combined to form declarations, control
-// structures, expressions, assignments, function calls, and other constructs within a program.
-// The parser rules collectively define the syntax of the language.
-
-// TODO
-
-// PARSER RULES
-//main function comes after all custome functions
 program : (function | comment | pattern)* main comment* ;
 main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN BODY");} body returnStatement? END_OF_SCOPE;
 
@@ -36,43 +19,31 @@ defaultArg : declerationArg ASSIGN expression ;
 
 defaultArgPlural : ((defaultArg COMMA)* defaultArg) |  ;
 
+
+//ٰValues
+directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
+
+value : IDENTIFIER | directValue | functionCall | lamdaCall | append | functionPointer | patternCall | listAccess;
+
 intVal : (PLUS | MINUS)? INT_VAL ;
 
 floatVal : (PLUS | MINUS)? FLOAT_VAL ;
 
 booleanVal : TRUE | FALSE ;
 
-directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
 
-// func(a); (function call)
-// lambda call
-// pettern matching call
-// directVal
-// Identifier
-// (y < 5)
-//compare : expression relationalOperator expression; //TODO
-
-value : IDENTIFIER | directValue | functionCall | lamdaCall | append | functionPointer | patternCall ;
-
-operation : ;
-
+//Function calls
 functionCall : (IDENTIFIER LPAR inputArgs RPAR) | builtIn ;
 
 patternCall : IDENTIFIER DOT MATCH LPAR inputArgs RPAR ;
 
 inputArgs : ((expression COMMA)* expression ) | ;
 
-operator : logicalOperator | arithmaticOperator | relationalOperator ;
-
 logicalOperator : AND | OR | NOT ;
 
-arithmaticOperator : PLUS | MINUS | MULT | DIV | MOD ;
+returnStatement: RETURN (expression | lamdaCall)? SEMICOLON;
 
-relationalOperator : GEQ | LEQ | GTR | LES | EQL | NEQ ;
-
-returnStatement: RETURN (expression | LAMDA)? SEMICOLON; //TODO: update due to expression changes
-
-lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body RBRACE; //TODO: cleaner code
+lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body RBRACE;
 
 function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
 
@@ -82,8 +53,21 @@ lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
 
 body : (statement | comment)* ;
 
-assignmentStatement: IDENTIFIER assignmentOperators expression;
+assignmentStatement: IDENTIFIER ASSIGN expression;
 
+//assignment
+//    :
+//    IDENTIFIER
+//    (
+//    LBRACKET
+//    INT_VAL
+//    RBRACKET
+//    )?
+//    ASSIGN
+//    expr
+//    ;
+
+//TODO: doesnt work
 statement : assignmentStatement SEMICOLON;//(ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration | assignmentStatement | expression) SEMICOLON;
 
 // IF-ELSEIF-ELSE RULES:
@@ -95,11 +79,11 @@ condition :  expression | (LPAR expression RPAR logicalOperator)* LPAR expressio
 
 //conditionalOperator: GEQ | LEQ | GTR | LES |EQL | NEQ;
 
-ifBlock : IF condition body ;
+ifBlock : IF condition body ; //TODO: loopbody?
 
-elseifBlock : ELSEIF condition body;
+elseifBlock : ELSEIF condition body; // TODO: loopbody?
 
-elseBlock : ELSE body END_OF_SCOPE;
+elseBlock : ELSE body END_OF_SCOPE; // TODO: loopbody?
 
 // LOOP-DO RULES :
 
@@ -129,7 +113,7 @@ break : BREAK SEMICOLON | breakif ;
 
 breakif : BREAK IF LPAR condition RPAR SEMICOLON ;
 
-loopBody : (statement | comment | ifLoopStatement | break | next)+ ;
+loopBody : (statement | comment | ifLoopStatement | break | next )+ ; //TODO: in loop body there can also be another loop
 
 // BUILTIN FUCNTIONS :
 
@@ -143,6 +127,8 @@ len : (IDENTIFIER ASSIGN)? LENGTH LPAR (IDENTIFIER | STRING_VAL | list) RPAR SEM
 
 list : LBRACKET (  | (directValue COMMA)* directValue) RBRACKET ;
 
+listAccess: IDENTIFIER LBRACKET (expression) RBRACKET;
+
 puts : PUTS LPAR (IDENTIFIER | expression) RPAR SEMICOLON ;
 
 push : PUSH LPAR IDENTIFIER COMMA expression RPAR SEMICOLON ;
@@ -154,115 +140,106 @@ push : PUSH LPAR IDENTIFIER COMMA expression RPAR SEMICOLON ;
 //assignment : ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN ;
 
 assignmentOperators : ASSIGN| PLUS_ASSIGN | MINUS_ASSIGN |MULT_ASSIGN |DIV_ASSIGN |MOD_ASSIGN; //operators:      = += -= *= /= %=
-
-// OPERATORS :
-
-unaryPostfixOperator : PLUS_PLUS | MINUS_MINUS ;
-
-unaryPrefixOperator : MINUS | NOT ;
-
-multDevideRemainderOperator : MULT | DIV | MOD ;
-
-plusMinusOperator : PLUS | MINUS ;
-
-comparisonOperator : LEQ | LES | GEQ | GTR ;
-
-equalityOperator : EQL | NEQ ;
-
-//// EXPRESIONS :
-
-
+append: expression APPEND expression ;
 
 expression
-    : expr_logic_or expr_logic_append_
-    ;
-expr_logic_append_
-    : APPEND expr_logic_or expr_logic_append_ { System.out.println("Operator: <<"); }
-    | //epsilon
-    ;
+  : expr_append
+  ;
 
-expr_logic_or
-    : expr_logic_and expr_logic_or_
-    ;
+expr_append
+  : expr_or expr_append_
+  ;
 
-expr_logic_or_
-    : OR expr_logic_and expr_logic_or_ { System.out.println("Operator: ||"); }
-    | // epsilon
-    ;
+expr_append_
+  : APPEND expr_or expr_append_ {System.out.println("Operator: <<");}
+  |
+  ;
 
-expr_logic_and
-    : expr_rel_eq_neq expr_logic_and_
-    ;
+expr_or
+  : LPAR expression RPAR expr_or_
+  | expr_and
+  ;
 
-expr_logic_and_
-    : AND expr_rel_eq_neq expr_logic_and_ { System.out.println("Operator: &&"); }
-    | // epsilon
-    ;
+expr_or_
+  : OR LPAR expression RPAR expr_or_ {System.out.println("Operator: ||");}
+  |
+  ;
 
-expr_rel_eq_neq
-    : expr_rel_cmp expr_rel_eq_neq_
-    ;
+expr_and
+  : LPAR expression RPAR expr_and_
+  | expr_eq
+  ;
 
-expr_rel_eq_neq_
-    : EQL expr_rel_cmp expr_rel_eq_neq_ { System.out.println("Operator: =="); }
-    | NEQ expr_rel_cmp expr_rel_eq_neq_ { System.out.println("Operator: !="); }
-    | // epsilon
-    ;
+expr_and_
+  : AND LPAR expression RPAR expr_and_ {System.out.println("Operator: &&");}
+  |
+  ;
 
-expr_rel_cmp
-    : expr_arith_plus_minus expr_rel_cmp_
-    ;
+expr_eq
+  : expr_cmp expr_eq_
+  ;
 
-expr_rel_cmp_
-    : GTR expr_arith_plus_minus expr_rel_cmp_ { System.out.println("Operator: >"); }
-    | GEQ expr_arith_plus_minus expr_rel_cmp_ { System.out.println("Operator: >="); }
-    | LES expr_arith_plus_minus expr_rel_cmp_ { System.out.println("Operator: <"); }
-    | LEQ expr_arith_plus_minus expr_rel_cmp_ { System.out.println("Operator: <="); }
-    | // epsilon
-    ;
+expr_eq_
+  : EQL expr_cmp expr_eq_  {System.out.println("Operator: ==");}
+  | NEQ expr_cmp expr_eq_  {System.out.println("Operator: !=");}
+  |
+  ;
 
-expr_arith_plus_minus
-    : expr_arith_mult_div_mod expr_arith_plus_minus_
-    ;
+expr_cmp
+  : expr_add_sub expr_cmp_
+  ;
 
-expr_arith_plus_minus_
-    : PLUS expr_arith_mult_div_mod expr_arith_plus_minus_ { System.out.println("Operator: +"); }
-    | MINUS expr_arith_mult_div_mod expr_arith_plus_minus_ { System.out.println("Operator: -"); }
-    | // epsilon
-    ;
+expr_cmp_
+  : GTR expr_add_sub expr_cmp_  {System.out.println("Operator: >");}
+  | LES expr_add_sub expr_cmp_  {System.out.println("Operator: <");}
+  | GEQ expr_add_sub expr_cmp_  {System.out.println("Operator: >=");}
+  | LEQ expr_add_sub expr_cmp_  {System.out.println("Operator: <=");}
+  |
+  ;
 
-expr_arith_mult_div_mod
-    : expr_unary_prefix expr_arith_mult_div_mod_
-    ;
+expr_add_sub
+  : expr_mul_div expr_add_sub_
+  ;
 
-expr_arith_mult_div_mod_
-    : MULT expr_unary_prefix expr_arith_mult_div_mod_ { System.out.println("Operator: *"); }
-    | DIV expr_unary_prefix expr_arith_mult_div_mod_ { System.out.println("Operator: /"); }
-    | MOD expr_unary_prefix expr_arith_mult_div_mod_ { System.out.println("Operator: %"); } //TODO: we dont have %
-    | // epsilon
-    ;
+expr_add_sub_
+  : PLUS expr_mul_div expr_add_sub_  {System.out.println("Operator: +");}
+  | MINUS expr_mul_div expr_add_sub_  {System.out.println("Operator: -");}
+  |
+  ;
 
-expr_unary_prefix
-    : PLUS expr_unary_postfix { System.out.println("Operator: +"); } //TODO: we dont have unary +?
-    | MINUS expr_unary_postfix { System.out.println("Operator: -"); }
-    | NOT expr_unary_postfix { System.out.println("Operator: !"); }
-    | //epsilon
-    ;
+expr_mul_div
+  : expr_unary expr_mul_div_
+  ;
+
+expr_mul_div_
+  : MULT expr_unary expr_mul_div_  {System.out.println("Operator: *");}
+  | DIV expr_unary expr_mul_div_  {System.out.println("Operator: /");}
+  | MOD expr_unary expr_mul_div_  {System.out.println("Operator: %");}
+  |
+  ;
+
+expr_unary
+  : NOT expr_unary_postfix  {System.out.println("Operator: !");}
+  | MINUS expr_unary_postfix  {System.out.println("Operator: -");}
+  | expr_unary_postfix
+  ;
 
 expr_unary_postfix
-    : PLUS_PLUS expr_other { System.out.println("Operator: ++"); }
-    | MINUS_MINUS expr_other { System.out.println("Operator: --"); }
-    | expr_other
-    ;
+  : expr_other  PLUS_PLUS {System.out.println("Operator: ++");} //TODO: print after expr_other or after plus plus?
+  | expr_other  MINUS_MINUS{System.out.println("Operator: --");}
+  | expr_other
+  ;
 
 expr_other
-    : LPAR expression RPAR
-    | list
-    | IDENTIFIER
-    | functionCall
-//    | query_bool
-//    | primitive_val
-    ;
+  : LPAR expression RPAR
+  | list
+  | (IDENTIFIER | listAccess)// (PLUS_PLUS | MINUS_MINUS)?
+  | functionCall;
+//  | primitive_function_call
+//  | primitive_value
+//  | matching
+//  | function_ptr
+
 //
 //expression : append | orExpression ;
 //
@@ -302,8 +279,6 @@ expr_other
 //
 //or : expression OR expression ;
 //
-append: expression APPEND expression ;
-
 
 
 
@@ -385,8 +360,6 @@ MINUS_ASSIGN: '-=';
 MULT_ASSIGN: '*=';
 DIV_ASSIGN: '/=';
 MOD_ASSIGN: '%=';
-UNARY_INCREMENT: '++';
-UNARY_DECREMENT: '--';
 APPEND: '<<';
 
 // Symbols
