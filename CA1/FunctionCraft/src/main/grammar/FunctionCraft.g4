@@ -53,19 +53,7 @@ lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
 
 body : (statement | comment)* ;
 
-assignmentStatement: IDENTIFIER ASSIGN expression;
-
-//assignment
-//    :
-//    IDENTIFIER
-//    (
-//    LBRACKET
-//    INT_VAL
-//    RBRACKET
-//    )?
-//    ASSIGN
-//    expr
-//    ;
+assignmentStatement: (IDENTIFIER|listAccess) assignmentOperators expression;
 
 //TODO: doesnt work
 statement : assignmentStatement SEMICOLON;//(ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration | assignmentStatement | expression) SEMICOLON;
@@ -233,6 +221,7 @@ expr_unary_postfix
 expr_other
   : LPAR expression RPAR
   | list
+  | directValue
   | (IDENTIFIER | listAccess)// (PLUS_PLUS | MINUS_MINUS)?
   | functionCall;
 //  | primitive_function_call
