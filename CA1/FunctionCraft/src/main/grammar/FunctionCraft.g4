@@ -43,7 +43,7 @@ logicalOperator : AND | OR | NOT ;
 
 returnStatement: RETURN (expression | lamdaCall)? SEMICOLON;
 
-lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body RBRACE;
+lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body returnStatement? RBRACE;
 
 function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
 
