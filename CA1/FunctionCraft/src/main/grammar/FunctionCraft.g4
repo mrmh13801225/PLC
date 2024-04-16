@@ -5,7 +5,7 @@ main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN BODY");} body returnSta
 
 comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
-pattern : patternDeclaration (NEW_LINE CASE condition ASSIGN expression)+ SEMICOLON;
+pattern : patternDeclaration ('\r\n' CASE condition ASSIGN expression)+ SEMICOLON;
 
 patternDeclaration : PATTERN IDENTIFIER LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
@@ -23,7 +23,7 @@ defaultArgPlural : ((defaultArg COMMA)* defaultArg) |  ;
 //ٰValues
 directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
 
-value : IDENTIFIER | directValue | functionCall | lamdaCall | append | functionPointer | patternCall | listAccess;
+value : IDENTIFIER | directValue | functionCall | lamdaCall | functionPointer | patternCall | listAccess;
 
 intVal : (PLUS | MINUS)? INT_VAL ;
 
@@ -95,7 +95,7 @@ elseLoopBlock : ELSE loopBody END_OF_SCOPE;
 
 next : NEXT SEMICOLON | nextif ;
 
-nextif : NEXT IF LPAR condition RPAR SEMICOLON ;
+nextif : NEXT IF LPAR condition RPAR SEMICOLON ; //TODO: Semicolon
 
 break : BREAK SEMICOLON | breakif ;
 
@@ -107,15 +107,15 @@ loopBody : (statement | comment | ifLoopStatement | break | next )+ ; //TODO: in
 
 builtIn : chop | chomp | len | puts | push;
 
-chop : (IDENTIFIER ASSIGN)? CHOP LPAR (IDENTIFIER | STRING_VAL) RPAR SEMICOLON;
+chop : (IDENTIFIER ASSIGN)? CHOP LPAR (IDENTIFIER | STRING_VAL) RPAR;
 
-chomp : (IDENTIFIER ASSIGN)? CHOMP LPAR (IDENTIFIER | STRING_VAL) RPAR SEMICOLON;
+chomp : (IDENTIFIER ASSIGN)? CHOMP LPAR (IDENTIFIER | STRING_VAL) RPAR;
 
-len : (IDENTIFIER ASSIGN)? LENGTH LPAR (IDENTIFIER | STRING_VAL | list) RPAR SEMICOLON ;
+len : (IDENTIFIER ASSIGN)? LENGTH LPAR (IDENTIFIER | STRING_VAL | list) RPAR ;
 
 list : LBRACKET (  | (directValue COMMA)* directValue) RBRACKET ;
 
-listAccess: IDENTIFIER LBRACKET (expression) RBRACKET;
+listAccess: IDENTIFIER (LBRACKET (expression) RBRACKET)+;
 
 puts : PUTS LPAR (IDENTIFIER | expression) RPAR ;
 
@@ -222,9 +222,12 @@ expr_other
   : LPAR expression RPAR
   | list
   | directValue
-  | (IDENTIFIER | listAccess)// (PLUS_PLUS | MINUS_MINUS)?
-  | functionCall;
-//  | primitive_function_call
+  | (IDENTIFIER | listAccess) (PLUS_PLUS | MINUS_MINUS)?
+  | functionCall
+  | functionPointer
+  | lamdaCall
+  |patternCall
+  ;
 //  | primitive_value
 //  | matching
 //  | function_ptr
@@ -359,6 +362,7 @@ COMMA:     ',';
 SEMICOLON: ';';
 CASE:      '\t|' | '    |';
 DOT: '.';
+COLON: ':';
 
 // Othercr
 
