@@ -56,7 +56,7 @@ body : (statement | comment)* ;
 assignmentStatement: (IDENTIFIER|listAccess) assignmentOperators expression;
 
 //TODO: doesnt work
-statement : assignmentStatement SEMICOLON;//(ifStatement | loopDo | forLoop | builtIn | declaration | lambdaFuncDecleration | assignmentStatement | expression) SEMICOLON;
+statement : (( assignmentStatement | lambdaFuncDecleration | expression | functionCall) SEMICOLON) | ifStatement | loopDo | forLoop;
 
 // IF-ELSEIF-ELSE RULES:
 
@@ -117,9 +117,9 @@ list : LBRACKET (  | (directValue COMMA)* directValue) RBRACKET ;
 
 listAccess: IDENTIFIER LBRACKET (expression) RBRACKET;
 
-puts : PUTS LPAR (IDENTIFIER | expression) RPAR SEMICOLON ;
+puts : PUTS LPAR (IDENTIFIER | expression) RPAR ;
 
-push : PUSH LPAR IDENTIFIER COMMA expression RPAR SEMICOLON ;
+push : PUSH LPAR IDENTIFIER COMMA expression RPAR ;
 
 //elementAccess : expression LBRACKET expression RBRACKET ;
 
@@ -359,7 +359,6 @@ COMMA:     ',';
 SEMICOLON: ';';
 CASE:      '\t|' | '    |';
 DOT: '.';
-NEW_LINE: '\n' | '\r' ;
 
 // Othercr
 
