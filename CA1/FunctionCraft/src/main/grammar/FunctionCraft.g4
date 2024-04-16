@@ -5,7 +5,12 @@ main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN BODY");} body returnSta
 
 comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
-pattern : patternDeclaration ('\r\n' CASE condition ASSIGN expression)+ SEMICOLON;
+//pattern : patternDeclaration ( NEW_LINE CASE condition ASSIGN expression)+ SEMICOLON;
+//pattern : patternDeclaration (indentation CASE condition ASSIGN expression)+ SEMICOLON;
+pattern : patternDeclaration (('\r\n    |' | '\r\n\t') condition ASSIGN expression)+ SEMICOLON;
+
+indentation : INDENT;
+
 
 patternDeclaration : PATTERN IDENTIFIER LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
@@ -366,9 +371,14 @@ DOT: '.';
 COLON: ':';
 
 // Othercr
+INDENT : [ \t]+ -> channel(HIDDEN);//, type(INDENT);
+//NEW_LINE : '\r\n';
+NEW_LINE : '\r'? '\n' -> channel(HIDDEN);//,type(NEW_LINE);
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 SINGLE_LINE_COMMENT:    '#' ~[\r\n]* -> skip;
 MULTY_LINE_COMMENT:'=begin' .*? '=end' -> skip;
-WS:         [ \t\r\n]+ -> skip;
+WS:         [ \t\r\n] [ \t\r\n]? [ \t\r\n]? -> skip;
+
+
 
