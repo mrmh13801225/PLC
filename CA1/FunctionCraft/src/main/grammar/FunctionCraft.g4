@@ -7,7 +7,7 @@ comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
 //pattern : patternDeclaration ( NEW_LINE CASE condition ASSIGN expression)+ SEMICOLON;
 //pattern : patternDeclaration (indentation CASE condition ASSIGN expression)+ SEMICOLON;
-pattern : patternDeclaration (('\r\n    |' | '\r\n\t') condition ASSIGN expression)+ SEMICOLON;
+pattern : patternDeclaration (('\r\n    |' | '\r\n\t|') condition ASSIGN expression)+ SEMICOLON;
 
 indentation : INDENT;
 
@@ -112,19 +112,19 @@ loopBody : (statement | comment | ifLoopStatement | break | next )+ ; //TODO: in
 
 builtIn : chop | chomp | len | puts | push;
 
-chop : (IDENTIFIER ASSIGN)? CHOP LPAR (IDENTIFIER | STRING_VAL) RPAR;
+chop : CHOP LPAR expression RPAR;
 
-chomp : (IDENTIFIER ASSIGN)? CHOMP LPAR (IDENTIFIER | STRING_VAL) RPAR;
+chomp : CHOMP LPAR expression RPAR;
 
-len : (IDENTIFIER ASSIGN)? LENGTH LPAR (IDENTIFIER | STRING_VAL | list) RPAR ;
+len : LENGTH LPAR expression RPAR ;
 
-list : LBRACKET (  | (directValue COMMA)* directValue) RBRACKET ;
+list : LBRACKET (  | (expression COMMA)* expression) RBRACKET ;
 
 listAccess: IDENTIFIER (LBRACKET (expression) RBRACKET)+;
 
-puts : PUTS LPAR (IDENTIFIER | expression) RPAR ;
+puts : PUTS LPAR expression RPAR ;
 
-push : PUSH LPAR IDENTIFIER COMMA expression RPAR ;
+push : PUSH LPAR expression COMMA expression RPAR ;
 
 //elementAccess : expression LBRACKET expression RBRACKET ;
 
