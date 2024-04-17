@@ -14,9 +14,10 @@ indentation : INDENT;
 
 patternDeclaration : PATTERN IDENTIFIER LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
-declerationArgs : normalArgs (LBRACKET defaultArgPlural RBRACKET)? ; //TODO: can bracets be empty?
-
-normalArgs : ((declerationArg COMMA)* declerationArg) |;
+declerationArgs : (normalArgs (COMMA LBRACKET defaultArgPlural RBRACKET)?) |
+                   normalArgs | LBRACKET defaultArgPlural RBRACKET | //epsilon; //TODO: can bracets be empty?
+                   ;
+normalArgs : ((declerationArg COMMA)* declerationArg);
 
 declerationArg : IDENTIFIER ;   //arg name while decleration
 
