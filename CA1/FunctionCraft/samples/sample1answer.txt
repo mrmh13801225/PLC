@@ -1,30 +1,31 @@
-FuncDec: list_printer
-FuncDec: printList
-Built-In: PUTS
-Built-In: PUTS
-FunctionCall
-Operator: -
-FuncDec: f2
+FuncDec: compare
 RETURN
 Operator: +
-Operator: +
-FuncDec: create2dList
-Decision: IF
-Operator: !=
+PatternDec: fib
+Operator: ==
+Operator: ==
+Operator: >
 FunctionCall
-Operator: <<
-Operator: *
-Operator: <<
+Operator: -
+FunctionCall
+Operator: -
 Operator: +
-Operator: +
-Decision: ELSE
+FuncDec: doFunc
+RETURN
 FunctionCall
 MAIN
+Assignment: compare_ptr
+Built-In: PUTS
+FunctionCall
+Loop: DO
+Built-In: PUTS
+Control: BREAK
+Control: NEXT
+Built-In: PUTS
+Built-In: MATCH
+Assignment: fib_5
+FunctionCall
+Structure: LAMBDA
+RETURN
 Operator: <<
-Built-In: PUTS
-FunctionCall
-FunctionCall
-Built-In: PUTS
-Built-In: CHOP
-Built-In: CHOP
-Built-In: CHOP
+Operator: <<
