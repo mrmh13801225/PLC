@@ -140,11 +140,11 @@ expression
   ;
 
 expr_append
-  :expr_or expr_append_ 
+  :expr_or expr_append_
   ;
 
 expr_append_
-  : APPEND {System.out.println("Operator: <<");} expr_or expr_append_
+  : APPEND expr_or {System.out.println("Operator: <<");}  expr_append_
   |
   ;
 
@@ -379,5 +379,4 @@ IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 SINGLE_LINE_COMMENT:    '#' ~[\r\n]* -> skip;
 MULTY_LINE_COMMENT:'=begin' .*? '=end' -> skip;
 WS:         [ \t\r\n] [ \t\r\n]? [ \t\r\n]? -> skip;
-
 
