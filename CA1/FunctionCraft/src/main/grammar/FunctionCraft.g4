@@ -5,8 +5,6 @@ main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN BODY");} body returnSta
 
 comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
-//pattern : patternDeclaration ( NEW_LINE CASE condition ASSIGN expression)+ SEMICOLON;
-//pattern : patternDeclaration (indentation CASE condition ASSIGN expression)+ SEMICOLON;
 pattern : patternDeclaration (('\r\n    |' | '\r\n\t|') condition ASSIGN expression)+ SEMICOLON;
 
 indentation : INDENT;
@@ -39,7 +37,7 @@ booleanVal : TRUE | FALSE ;
 
 
 //Function calls
-functionCall : (IDENTIFIER LPAR inputArgs RPAR) | builtIn ;
+functionCall : (IDENTIFIER {System.out.println("FuncCall");} LPAR inputArgs RPAR) | builtIn ;
 
 patternCall : IDENTIFIER DOT MATCH LPAR inputArgs RPAR ;
 
@@ -51,9 +49,9 @@ returnStatement: RETURN (expression | lamdaCall)? SEMICOLON;
 
 lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body returnStatement? RBRACE;
 
-function : FUNCTION IDENTIFIER LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
+function : FUNCTION IDENTIFIER {System.out.println("FuncDec");} LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
 
-functionPointer : METHOD LPAR COLON IDENTIFIER RPAR ;
+functionPointer : METHOD LPAR COLON IDENTIFIER RPAR {System.out.println("FuncPointer");};
 
 lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
 
@@ -99,19 +97,20 @@ elseifLoopBlock : ELSEIF condition loopBody ;
 
 elseLoopBlock : ELSE loopBody END_OF_SCOPE;
 
-next : NEXT SEMICOLON | nextif ;
+next : (NEXT SEMICOLON {System.out.println("Next");}) | nextif ;
 
-nextif : NEXT IF LPAR condition RPAR SEMICOLON ; //TODO: Semicolon
+nextif : NEXT IF {System.out.println("NextIf");} LPAR condition RPAR SEMICOLON ; //TODO: Semicolon
 
-break : BREAK SEMICOLON | breakif ;
+break : (BREAK SEMICOLON {System.out.println("Break");}) | breakif ;
 
-breakif : BREAK IF LPAR condition RPAR SEMICOLON ;
+breakif : BREAK IF {System.out.println("BreakIf");} LPAR condition RPAR SEMICOLON ;
 
 loopBody : (statement | comment | ifLoopStatement | break | next )+ ; //TODO: in loop body there can also be another loop
 
 // BUILTIN FUCNTIONS :
 
-builtIn : chop | chomp | len | puts | push;
+builtIn : (chop {System.out.println("Built-IN CHOP");})| (chomp {System.out.println("Built-IN CHOMP");}) | (len {System.out.println("Built-IN LEN");})
+        | (puts {System.out.println("Built-IN PUTS");}) | (push {System.out.println("Built-IN PUSH");});
 
 chop : CHOP LPAR expression RPAR;
 
@@ -380,6 +379,5 @@ IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 SINGLE_LINE_COMMENT:    '#' ~[\r\n]* -> skip;
 MULTY_LINE_COMMENT:'=begin' .*? '=end' -> skip;
 WS:         [ \t\r\n] [ \t\r\n]? [ \t\r\n]? -> skip;
-
 
 
