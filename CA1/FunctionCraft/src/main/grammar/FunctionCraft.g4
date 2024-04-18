@@ -73,7 +73,8 @@ listAccess: IDENTIFIER (LBRACKET (expression) RBRACKET)+;
 
 //      Condition :
 
-condition : (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
+//condition : (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
+condition : LPAR expression RPAR ;
 
 //      Calls:
 
