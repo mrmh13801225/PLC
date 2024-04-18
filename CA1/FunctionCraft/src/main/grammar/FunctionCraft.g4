@@ -195,8 +195,8 @@ expr_add_sub
   ;
 
 expr_add_sub_
-  : PLUS {System.out.println("Operator: +");} expr_mul_div expr_add_sub_
-  | MINUS {System.out.println("Operator: -");} expr_mul_div expr_add_sub_
+  : PLUS  expr_mul_div {System.out.println("Operator: +");} expr_add_sub_
+  | MINUS  expr_mul_div {System.out.println("Operator: -");} expr_add_sub_
   |
   ;
 
@@ -204,10 +204,10 @@ expr_mul_div
   : expr_unary expr_mul_div_
   ;
 
-expr_mul_div_
-  : MULT {System.out.println("Operator: *");} expr_unary expr_mul_div_
-  | DIV {System.out.println("Operator: /");} expr_unary expr_mul_div_
-  | MOD {System.out.println("Operator: %");} expr_unary expr_mul_div_
+expr_mul_div_ //TODO: DIV {System.out.println("Operator: /");} expr_unary expr_mul_div_
+  : MULT  expr_unary {System.out.println("Operator: *");} expr_mul_div_
+  | DIV  expr_unary {System.out.println("Operator: /");} expr_mul_div_
+  | MOD expr_unary  {System.out.println("Operator: %");}expr_mul_div_
   |
   ;
 
