@@ -1,7 +1,7 @@
 grammar FunctionCraft;
 
 program : (function | comment | pattern)* main comment* ;
-main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN BODY");} body returnStatement? END_OF_SCOPE;
+main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN");} body returnStatement? END_OF_SCOPE;
 
 comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
@@ -10,7 +10,7 @@ pattern : patternDeclaration (('\r\n    |' | '\r\n\t|') condition ASSIGN express
 indentation : INDENT;
 
 
-patternDeclaration : PATTERN IDENTIFIER LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
+patternDeclaration : PATTERN name = IDENTIFIER {System.out.println("PatternDec: "+$name.text);} LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
 declerationArgs : (normalArgs (COMMA LBRACKET defaultArgPlural RBRACKET)?) |
                    normalArgs | LBRACKET defaultArgPlural RBRACKET | //epsilon; //TODO: can bracets be empty?
@@ -37,7 +37,7 @@ booleanVal : TRUE | FALSE ;
 
 
 //Function calls
-functionCall : (IDENTIFIER {System.out.println("FuncCall");} LPAR inputArgs RPAR) | builtIn ;
+functionCall : (IDENTIFIER {System.out.println("FunctionCall");} LPAR inputArgs RPAR) | builtIn ;
 
 patternCall : IDENTIFIER DOT MATCH LPAR inputArgs RPAR ;
 
@@ -45,11 +45,11 @@ inputArgs : ((expression COMMA)* expression ) | ;
 
 logicalOperator : AND | OR | NOT ;
 
-returnStatement: RETURN (expression | lamdaCall)? SEMICOLON;
+returnStatement: RETURN {System.out.println("RETURN");} (expression | lamdaCall)? SEMICOLON;
 
-lambdaFuncDecleration : LAMDA LPAR (declerationArgs) RPAR LBRACE body returnStatement? RBRACE;
+lambdaFuncDecleration : LAMBDA {System.out.println("Structure: LAMBDA");} LPAR (declerationArgs) RPAR LBRACE body returnStatement? RBRACE;
 
-function : FUNCTION IDENTIFIER {System.out.println("FuncDec");} LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
+function : FUNCTION name = IDENTIFIER {System.out.println("FuncDec: "+$name.text);} LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
 
 functionPointer : METHOD LPAR COLON IDENTIFIER RPAR {System.out.println("FuncPointer");};
 
@@ -57,7 +57,7 @@ lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
 
 body : (statement | comment)* ;
 
-assignmentStatement: (IDENTIFIER|listAccess) assignmentOperators expression;
+assignmentStatement: name = IDENTIFIER ((LBRACKET (expression) RBRACKET)+)? {System.out.println("Assignment: "+$name.text);} assignmentOperators expression; //a[i] = 5
 
 //TODO: doesnt work
 statement : (( assignmentStatement | lambdaFuncDecleration | expression | functionCall) SEMICOLON) | ifStatement | loopDo | forLoop;
@@ -71,19 +71,19 @@ condition :  expression | (LPAR expression RPAR logicalOperator)* LPAR expressio
 
 //conditionalOperator: GEQ | LEQ | GTR | LES |EQL | NEQ;
 
-ifBlock : IF condition body ; //TODO: loopbody?
+ifBlock : IF {System.out.println("Decision: IF");}   condition body ;
 
-elseifBlock : ELSEIF condition body; // TODO: loopbody?
+elseifBlock : ELSEIF {System.out.println("Decision: ELSE IF");} condition body;
 
-elseBlock : ELSE body END_OF_SCOPE; // TODO: loopbody?
+elseBlock : ELSE {System.out.println("Decision: ELSE");} body END_OF_SCOPE;
 
 // LOOP-DO RULES :
 
-loopDo : LOOP DO loopBody END_OF_SCOPE;
+loopDo : LOOP DO {System.out.println("Loop: DO");} loopBody END_OF_SCOPE;
 
 // FOR-LOOP RULES :
 
-forLoop : FOR IDENTIFIER IN (IDENTIFIER | range) loopBody END_OF_SCOPE ;
+forLoop : FOR {System.out.println("Loop: FOR");} IDENTIFIER IN (IDENTIFIER | range) loopBody END_OF_SCOPE ;
 
 range : LPAR intVal DOT DOT INT_VAL RPAR ;
 
@@ -91,26 +91,26 @@ range : LPAR intVal DOT DOT INT_VAL RPAR ;
 
 ifLoopStatement : ifLoopBlock elseifLoopBlock* (elseLoopBlock | END_OF_SCOPE) ;
 
-ifLoopBlock : IF condition loopBody ;
+ifLoopBlock : IF {System.out.println("Decision: IF");} condition loopBody ;
 
-elseifLoopBlock : ELSEIF condition loopBody ;
+elseifLoopBlock : ELSEIF {System.out.println("Decision: ELSE IF");} condition loopBody ;
 
-elseLoopBlock : ELSE loopBody END_OF_SCOPE;
+elseLoopBlock : ELSE {System.out.println("Decision: ELSE");} loopBody END_OF_SCOPE;
 
-next : (NEXT SEMICOLON {System.out.println("Next");}) | nextif ;
+next : (NEXT SEMICOLON {System.out.println("Control: NEXT");}) | nextif ;
 
-nextif : NEXT IF {System.out.println("NextIf");} LPAR condition RPAR SEMICOLON ; //TODO: Semicolon
+nextif : NEXT IF {System.out.println("Control: NEXT");} LPAR condition RPAR SEMICOLON ; //TODO: Semicolon
 
-break : (BREAK SEMICOLON {System.out.println("Break");}) | breakif ;
+break : (BREAK SEMICOLON {System.out.println("Control: BREAK");}) | breakif ;
 
-breakif : BREAK IF {System.out.println("BreakIf");} LPAR condition RPAR SEMICOLON ;
+breakif : BREAK IF {System.out.println("Control: BREAK");} LPAR condition RPAR SEMICOLON ;
 
 loopBody : (statement | comment | ifLoopStatement | break | next )+ ; //TODO: in loop body there can also be another loop
 
 // BUILTIN FUCNTIONS :
 
-builtIn : (chop {System.out.println("Built-IN CHOP");})| (chomp {System.out.println("Built-IN CHOMP");}) | (len {System.out.println("Built-IN LEN");})
-        | (puts {System.out.println("Built-IN PUTS");}) | (push {System.out.println("Built-IN PUSH");});
+builtIn : (chop {System.out.println("Built-In: CHOP");})| (chomp {System.out.println("Built-In: CHOMP");}) | (len {System.out.println("Built-In: LEN");})
+        | (puts {System.out.println("Built-In: PUTS");}) | (push {System.out.println("Built-In: PUSH");});
 
 chop : CHOP LPAR expression RPAR;
 
@@ -133,7 +133,7 @@ push : PUSH LPAR expression COMMA expression RPAR ;
 //assignment : ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN ;
 
 assignmentOperators : ASSIGN| PLUS_ASSIGN | MINUS_ASSIGN |MULT_ASSIGN |DIV_ASSIGN |MOD_ASSIGN; //operators:      = += -= *= /= %=
-append: expression APPEND expression ;
+//append: expression APPEND expression ;
 
 expression
   : expr_append
@@ -144,7 +144,7 @@ expr_append
   ;
 
 expr_append_
-  : APPEND expr_or expr_append_ {System.out.println("Operator: <<");}
+  : APPEND {System.out.println("Operator: <<");} expr_or expr_append_
   |
   ;
 
@@ -154,7 +154,7 @@ expr_or
   ;
 
 expr_or_
-  : OR LPAR expression RPAR expr_or_ {System.out.println("Operator: ||");}
+  : OR {System.out.println("Operator: ||");} LPAR expression RPAR expr_or_
   |
   ;
 
@@ -164,7 +164,7 @@ expr_and
   ;
 
 expr_and_
-  : AND LPAR expression RPAR expr_and_ {System.out.println("Operator: &&");}
+  : AND {System.out.println("Operator: &&");} LPAR expression RPAR expr_and_
   |
   ;
 
@@ -173,8 +173,8 @@ expr_eq
   ;
 
 expr_eq_
-  : EQL expr_cmp expr_eq_  {System.out.println("Operator: ==");}
-  | NEQ expr_cmp expr_eq_  {System.out.println("Operator: !=");}
+  : EQL  {System.out.println("Operator: ==");} expr_cmp expr_eq_
+  | NEQ  {System.out.println("Operator: !=");} expr_cmp expr_eq_
   |
   ;
 
@@ -183,10 +183,10 @@ expr_cmp
   ;
 
 expr_cmp_
-  : GTR expr_add_sub expr_cmp_  {System.out.println("Operator: >");}
-  | LES expr_add_sub expr_cmp_  {System.out.println("Operator: <");}
-  | GEQ expr_add_sub expr_cmp_  {System.out.println("Operator: >=");}
-  | LEQ expr_add_sub expr_cmp_  {System.out.println("Operator: <=");}
+  : GTR  {System.out.println("Operator: >");} expr_add_sub expr_cmp_
+  | LES {System.out.println("Operator: <");} expr_add_sub expr_cmp_
+  | GEQ {System.out.println("Operator: >=");} expr_add_sub expr_cmp_
+  | LEQ {System.out.println("Operator: <=");} expr_add_sub expr_cmp_
   |
   ;
 
@@ -195,8 +195,8 @@ expr_add_sub
   ;
 
 expr_add_sub_
-  : PLUS expr_mul_div expr_add_sub_  {System.out.println("Operator: +");}
-  | MINUS expr_mul_div expr_add_sub_  {System.out.println("Operator: -");}
+  : PLUS {System.out.println("Operator: +");} expr_mul_div expr_add_sub_
+  | MINUS {System.out.println("Operator: -");} expr_mul_div expr_add_sub_
   |
   ;
 
@@ -205,21 +205,21 @@ expr_mul_div
   ;
 
 expr_mul_div_
-  : MULT expr_unary expr_mul_div_  {System.out.println("Operator: *");}
-  | DIV expr_unary expr_mul_div_  {System.out.println("Operator: /");}
-  | MOD expr_unary expr_mul_div_  {System.out.println("Operator: %");}
+  : MULT {System.out.println("Operator: *");} expr_unary expr_mul_div_
+  | DIV {System.out.println("Operator: /");} expr_unary expr_mul_div_
+  | MOD {System.out.println("Operator: %");} expr_unary expr_mul_div_
   |
   ;
 
 expr_unary
-  : NOT expr_unary_postfix  {System.out.println("Operator: !");}
-  | MINUS expr_unary_postfix  {System.out.println("Operator: -");}
+  : NOT {System.out.println("Operator: !");} expr_unary_postfix
+  | MINUS {System.out.println("Operator: -");} expr_unary_postfix
   | expr_unary_postfix
   ;
 
 expr_unary_postfix
-  : expr_other  PLUS_PLUS {System.out.println("Operator: ++");} //TODO: print after expr_other or after plus plus?
-  | expr_other  MINUS_MINUS{System.out.println("Operator: --");}
+  : expr_other PLUS_PLUS {System.out.println("Operator: ++");} //TODO: print after expr_other or after plus plus?
+  | expr_other MINUS_MINUS{System.out.println("Operator: --");}
   | expr_other
   ;
 
@@ -286,7 +286,7 @@ expr_other
 
 FUNCTION:     'def';
 END_OF_SCOPE: 'end';
-LAMDA:        '->';
+LAMBDA:        '->';
 MAIN:         'main';
 RETURN:       'return';
 IF:           'if';
