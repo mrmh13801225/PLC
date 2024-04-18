@@ -3,29 +3,62 @@ grammar FunctionCraft;
 
 program : (function | comment | pattern)* main comment* ;
 
+body : (statement | comment)* returnStatement? ;
+
 //Declerations:
 
-main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN");} body returnStatement? END_OF_SCOPE;
+main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN");} body END_OF_SCOPE;
 
-pattern : patternDeclaration (('\r\n    |' | '\r\n\t|') condition ASSIGN expression)+ SEMICOLON;
-
-patternDeclaration : PATTERN name = IDENTIFIER {System.out.println("PatternDec: "+$name.text);} LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
-
-comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
-
-declerationArgs : (normalArgs (COMMA LBRACKET defaultArgPlural RBRACKET)?) |
-                   normalArgs | LBRACKET defaultArgPlural RBRACKET | //epsilon
-                   ;
-normalArgs : ((declerationArg COMMA)* declerationArg);
+//      Decleration-Arg-Rules:
 
 declerationArg : IDENTIFIER ;
 
 defaultArg : declerationArg ASSIGN expression ;
 
-defaultArgPlural : ((defaultArg COMMA)* defaultArg) |  ;
+normalArgs : ((declerationArg COMMA)* declerationArg) ;
 
+defaultArgs : ((defaultArg COMMA)* defaultArg)? ;
 
-//ٰValues
+declerationArgs : (normalArgs (COMMA LBRACKET defaultArgs RBRACKET)?) |
+                   normalArgs | LBRACKET defaultArgs RBRACKET | //epsilon
+                   ;
+
+//      Pattern-Decleration-Rules:
+
+patternDeclaration : PATTERN name = IDENTIFIER
+                     {System.out.println("PatternDec: "+$name.text);}
+                     LPAR (declerationArgs) RPAR ;
+
+pattern : patternDeclaration (('\r\n    |' | '\r\n\t|') condition ASSIGN expression)+ SEMICOLON;
+
+//      Function-Decleration-Rules:
+
+functionDecleration : FUNCTION name = IDENTIFIER
+                      {System.out.println("FuncDec: "+$name.text);}
+                      LPAR (declerationArgs) RPAR ;
+
+function :  functionDecleration body END_OF_SCOPE;
+
+//      Lambda-Decleration-Rules:
+
+lambdaFunctionDecleration : LAMBDA {System.out.println("Structure: LAMBDA");} LPAR (declerationArgs) RPAR ;
+
+lambdaFunction : lambdaFunctionDecleration LBRACE body RBRACE;
+
+// Input-Args :
+
+inputArgs : ((expression COMMA)* expression )? ;
+
+// Operators:
+
+assignmentOperators : ASSIGN| PLUS_ASSIGN | MINUS_ASSIGN |MULT_ASSIGN |DIV_ASSIGN |MOD_ASSIGN;
+
+logicalOperator : AND | OR | NOT ;
+
+// ٰValues
+
+//      Direct-Values:
+
 directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
 
 intVal : (PLUS | MINUS)? INT_VAL ;
@@ -34,76 +67,23 @@ floatVal : (PLUS | MINUS)? FLOAT_VAL ;
 
 booleanVal : TRUE | FALSE ;
 
+list : LBRACKET (  | (expression COMMA)* expression) RBRACKET ;
 
-//Function calls
+listAccess: IDENTIFIER (LBRACKET (expression) RBRACKET)+;
+
+//      Condition :
+
+condition :  expression | (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
+
+//      Calls:
+
 functionCall : (IDENTIFIER {System.out.println("FunctionCall");} LPAR inputArgs RPAR) | builtIn ;
 
 patternCall : IDENTIFIER DOT MATCH LPAR inputArgs RPAR ;
 
-inputArgs : ((expression COMMA)* expression ) | ;
-
-logicalOperator : AND | OR | NOT ;
-
-returnStatement: RETURN {System.out.println("RETURN");} (expression | lamdaCall)? SEMICOLON;
-
-lambdaFuncDecleration : LAMBDA {System.out.println("Structure: LAMBDA");} LPAR (declerationArgs) RPAR LBRACE body returnStatement? RBRACE;
-
-function : FUNCTION name = IDENTIFIER {System.out.println("FuncDec: "+$name.text);} LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
+lamdaCall : lambdaFunction LPAR inputArgs RPAR ;
 
 functionPointer : METHOD LPAR COLON IDENTIFIER RPAR;
-
-lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
-
-body : (statement | comment)* ;
-
-assignmentStatement: name = IDENTIFIER ((LBRACKET (expression) RBRACKET)+)? {System.out.println("Assignment: "+$name.text);} assignmentOperators expression;
-
-statement : (( assignmentStatement | lambdaFuncDecleration | expression | functionCall) SEMICOLON) | ifStatement | loopDo | forLoop;
-
-// IF-ELSEIF-ELSE RULES:
-
-ifStatement : ifBlock elseifBlock* (elseBlock | END_OF_SCOPE) ;
-
-//condition :  (value relationalOperator value) ; //TODO: if (1)
-condition :  expression | (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
-
-//conditionalOperator: GEQ | LEQ | GTR | LES |EQL | NEQ;
-
-ifBlock : IF {System.out.println("Decision: IF");}   condition body ;
-
-elseifBlock : ELSEIF {System.out.println("Decision: ELSE IF");} condition body;
-
-elseBlock : ELSE {System.out.println("Decision: ELSE");} body END_OF_SCOPE;
-
-// LOOP-DO RULES :
-
-loopDo : LOOP DO {System.out.println("Loop: DO");} loopBody END_OF_SCOPE;
-
-// FOR-LOOP RULES :
-
-forLoop : FOR {System.out.println("Loop: FOR");} IDENTIFIER IN (IDENTIFIER | range) loopBody END_OF_SCOPE ;
-
-range : LPAR intVal DOT DOT INT_VAL RPAR ;
-
-// IF LOOP :
-
-ifLoopStatement : ifLoopBlock elseifLoopBlock* (elseLoopBlock | END_OF_SCOPE) ;
-
-ifLoopBlock : IF {System.out.println("Decision: IF");} condition loopBody ;
-
-elseifLoopBlock : ELSEIF {System.out.println("Decision: ELSE IF");} condition loopBody ;
-
-elseLoopBlock : ELSE {System.out.println("Decision: ELSE");} loopBody END_OF_SCOPE;
-
-next : (NEXT SEMICOLON {System.out.println("Control: NEXT");}) | nextif ;
-
-nextif : NEXT IF {System.out.println("Control: NEXT");} LPAR condition RPAR SEMICOLON ; //TODO: Semicolon
-
-break : (BREAK SEMICOLON {System.out.println("Control: BREAK");}) | breakif ;
-
-breakif : BREAK IF {System.out.println("Control: BREAK");} LPAR condition RPAR SEMICOLON ;
-
-loopBody : (statement | comment | ifLoopStatement | break | next )+ ; //TODO: in loop body there can also be another loop
 
 // BUILTIN FUCNTIONS :
 
@@ -116,105 +96,103 @@ chomp : CHOMP {System.out.println("Built-In: CHOMP");} LPAR expression RPAR;
 
 len : LENGTH {System.out.println("Built-In: LEN");} LPAR expression RPAR ;
 
-list : LBRACKET (  | (expression COMMA)* expression) RBRACKET ;
-
-listAccess: IDENTIFIER (LBRACKET (expression) RBRACKET)+;
-
 puts : PUTS {System.out.println("Built-In: PUTS");} LPAR expression RPAR ;
 
 push : PUSH {System.out.println("Built-In: PUSH");} LPAR expression COMMA expression RPAR ;
 
-assignmentOperators : ASSIGN| PLUS_ASSIGN | MINUS_ASSIGN |MULT_ASSIGN |DIV_ASSIGN |MOD_ASSIGN;
+//
+
+// Expression-Rules:
 
 expression
-  : expr_append
+  : exprAppend
   ;
 
-expr_append
-  :expr_or expr_append_
+exprAppend
+  :exprOr exprAppend_
   ;
 
-expr_append_
-  : APPEND expr_or {System.out.println("Operator: <<");}  expr_append_
+exprAppend_
+  : APPEND exprOr {System.out.println("Operator: <<");}  exprAppend_
   |
   ;
 
-expr_or
-  : LPAR expression RPAR expr_or_
-  | expr_and
+exprOr
+  : LPAR expression RPAR exprOr_
+  | exprAnd
   ;
 
-expr_or_
-  : OR  {System.out.println("Operator: ||");} LPAR expression RPAR expr_or_
+exprOr_
+  : OR  {System.out.println("Operator: ||");} LPAR expression RPAR exprOr_
   |
   ;
 
-expr_and
-  : LPAR expression  RPAR expr_and_
-  | expr_eq
+exprAnd
+  : LPAR expression  RPAR exprAnd_
+  | exprEq
   ;
 
-expr_and_
-  : AND {System.out.println("Operator: &&");} LPAR expression RPAR expr_and_
+exprAnd_
+  : AND {System.out.println("Operator: &&");} LPAR expression RPAR exprAnd_
   |
   ;
 
-expr_eq
-  : expr_cmp expr_eq_
+exprEq
+  : exprCmp exprEq_
   ;
 
-expr_eq_
-  : EQL  {System.out.println("Operator: ==");} expr_cmp expr_eq_
-  | NEQ  {System.out.println("Operator: !=");} expr_cmp expr_eq_
+exprEq_
+  : EQL  {System.out.println("Operator: ==");} exprCmp exprEq_
+  | NEQ  {System.out.println("Operator: !=");} exprCmp exprEq_
   |
   ;
 
-expr_cmp
-  : expr_add_sub expr_cmp_
+exprCmp
+  : exprAddSub exprCmp_
   ;
 
-expr_cmp_ //TODO: place of prints
-  : GTR  {System.out.println("Operator: >");} expr_add_sub expr_cmp_
-  | LES {System.out.println("Operator: <");} expr_add_sub expr_cmp_
-  | GEQ {System.out.println("Operator: >=");} expr_add_sub expr_cmp_
-  | LEQ {System.out.println("Operator: <=");} expr_add_sub expr_cmp_
+exprCmp_
+  : GTR  {System.out.println("Operator: >");} exprAddSub exprCmp_
+  | LES {System.out.println("Operator: <");} exprAddSub exprCmp_
+  | GEQ {System.out.println("Operator: >=");} exprAddSub exprCmp_
+  | LEQ {System.out.println("Operator: <=");} exprAddSub exprCmp_
   |
   ;
 
-expr_add_sub
-  : expr_mul_div expr_add_sub_
+exprAddSub
+  : exprMultDiv exprAddSub_
   ;
 
-expr_add_sub_
-  : PLUS  expr_mul_div {System.out.println("Operator: +");} expr_add_sub_
-  | MINUS  expr_mul_div {System.out.println("Operator: -");} expr_add_sub_
+exprAddSub_
+  : PLUS  exprMultDiv {System.out.println("Operator: +");} exprAddSub_
+  | MINUS  exprMultDiv {System.out.println("Operator: -");} exprAddSub_
   |
   ;
 
-expr_mul_div
-  : expr_unary expr_mul_div_
+exprMultDiv
+  : exprUnary exprMultDiv_
   ;
 
-expr_mul_div_ //TODO: DIV {System.out.println("Operator: /");} expr_unary expr_mul_div_
-  : MULT  expr_unary {System.out.println("Operator: *");} expr_mul_div_
-  | DIV  expr_unary {System.out.println("Operator: /");} expr_mul_div_
-  | MOD expr_unary  {System.out.println("Operator: %");}expr_mul_div_
+exprMultDiv_
+  : MULT  exprUnary {System.out.println("Operator: *");} exprMultDiv_
+  | DIV  exprUnary {System.out.println("Operator: /");} exprMultDiv_
+  | MOD exprUnary  {System.out.println("Operator: %");}exprMultDiv_
   |
   ;
 
-expr_unary
-  : NOT {System.out.println("Operator: !");} expr_unary_postfix
-  | MINUS {System.out.println("Operator: -");} expr_unary_postfix
-  | expr_unary_postfix
+exprUnary
+  : NOT {System.out.println("Operator: !");} exprUnaryPostfix
+  | MINUS {System.out.println("Operator: -");} exprUnaryPostfix
+  | exprUnaryPostfix
   ;
 
-expr_unary_postfix
-  : expr_other PLUS_PLUS {System.out.println("Operator: ++");} //TODO: print after expr_other or after plus plus?
-  | expr_other MINUS_MINUS{System.out.println("Operator: --");}
-  | expr_other
+exprUnaryPostfix
+  : exprValues PLUS_PLUS {System.out.println("Operator: ++");}
+  | exprValues MINUS_MINUS{System.out.println("Operator: --");}
+  | exprValues
   ;
 
-expr_other
+exprValues
   : LPAR expression RPAR
   | list
   | directValue
@@ -222,9 +200,69 @@ expr_other
   | functionCall
   | functionPointer
   | lamdaCall
-  | lambdaFuncDecleration
-  |patternCall
+  | lambdaFunction
+  | patternCall
   ;
+
+// Statements:
+
+statement : (( assignmentStatement | expression) SEMICOLON) | ifStatement | loopDo | forLoop;
+
+returnStatement: RETURN {System.out.println("RETURN");} (expression)? SEMICOLON;
+
+assignmentStatement: name = IDENTIFIER ((LBRACKET (expression) RBRACKET)+)?
+                     {System.out.println("Assignment: "+$name.text);}
+                     assignmentOperators expression;
+
+//      IF-ELSEIF-ELSE RULES:
+
+ifStatement : ifBlock elseifBlock* (elseBlock | END_OF_SCOPE) ;
+
+ifBlock : IF {System.out.println("Decision: IF");} condition body ;
+
+elseifBlock : ELSEIF {System.out.println("Decision: ELSE IF");} condition body;
+
+elseBlock : ELSE {System.out.println("Decision: ELSE");} body END_OF_SCOPE;
+
+//      LOOPS:
+
+//              LOOP-DO RULES:
+
+loopDo : LOOP DO {System.out.println("Loop: DO");} loopBody END_OF_SCOPE;
+
+//              FOR-LOOP RULES:
+
+forLoop : FOR {System.out.println("Loop: FOR");} IDENTIFIER IN (IDENTIFIER | range) loopBody END_OF_SCOPE ;
+
+//      Loop-Statements-Rules:
+
+range : LPAR intVal DOT DOT INT_VAL RPAR ;
+
+loopBody : (statement | comment | ifLoopStatement | break | next )* returnStatement? ;
+
+//              Loop-If-Elseif-Else-Rules:
+
+ifLoopStatement : ifLoopBlock elseifLoopBlock* (elseLoopBlock | END_OF_SCOPE) ;
+
+ifLoopBlock : IF {System.out.println("Decision: IF");} condition loopBody ;
+
+elseifLoopBlock : ELSEIF {System.out.println("Decision: ELSE IF");} condition loopBody ;
+
+elseLoopBlock : ELSE {System.out.println("Decision: ELSE");} loopBody END_OF_SCOPE;
+
+//              Next-Break-Rules:
+
+next : (NEXT SEMICOLON {System.out.println("Control: NEXT");}) | nextif ;
+
+nextif : NEXT IF {System.out.println("Control: NEXT");} LPAR condition RPAR SEMICOLON ;
+
+break : (BREAK SEMICOLON {System.out.println("Control: BREAK");}) | breakif ;
+
+breakif : BREAK IF {System.out.println("Control: BREAK");} LPAR condition RPAR SEMICOLON ;
+
+//
+
+comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
 
 // LEXICAL RULES
 // Keywords
