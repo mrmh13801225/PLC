@@ -51,7 +51,7 @@ lambdaFuncDecleration : LAMBDA {System.out.println("Structure: LAMBDA");} LPAR (
 
 function : FUNCTION name = IDENTIFIER {System.out.println("FuncDec: "+$name.text);} LPAR (declerationArgs) RPAR body returnStatement? END_OF_SCOPE;
 
-functionPointer : METHOD LPAR COLON IDENTIFIER RPAR {System.out.println("FuncPointer");};
+functionPointer : METHOD LPAR COLON IDENTIFIER RPAR;
 
 lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
 
@@ -109,22 +109,22 @@ loopBody : (statement | comment | ifLoopStatement | break | next )+ ; //TODO: in
 
 // BUILTIN FUCNTIONS :
 
-builtIn : (chop {System.out.println("Built-In: CHOP");})| (chomp {System.out.println("Built-In: CHOMP");}) | (len {System.out.println("Built-In: LEN");})
-        | (puts {System.out.println("Built-In: PUTS");}) | (push {System.out.println("Built-In: PUSH");});
+builtIn : (chop )| (chomp ) | (len )
+        | (puts ) | (push );
 
-chop : CHOP LPAR expression RPAR;
+chop : CHOP {System.out.println("Built-In: CHOP");} LPAR expression RPAR;
 
-chomp : CHOMP LPAR expression RPAR;
+chomp : CHOMP {System.out.println("Built-In: CHOMP");} LPAR expression RPAR;
 
-len : LENGTH LPAR expression RPAR ;
+len : LENGTH {System.out.println("Built-In: LEN");} LPAR expression RPAR ;
 
 list : LBRACKET (  | (expression COMMA)* expression) RBRACKET ;
 
 listAccess: IDENTIFIER (LBRACKET (expression) RBRACKET)+;
 
-puts : PUTS LPAR expression RPAR ;
+puts : PUTS {System.out.println("Built-In: PUTS");} LPAR expression RPAR ;
 
-push : PUSH LPAR expression COMMA expression RPAR ;
+push : PUSH {System.out.println("Built-In: PUSH");} LPAR expression COMMA expression RPAR ;
 
 //elementAccess : expression LBRACKET expression RBRACKET ;
 
@@ -140,7 +140,7 @@ expression
   ;
 
 expr_append
-  : expr_or expr_append_
+  :expr_or expr_append_ 
   ;
 
 expr_append_
@@ -154,12 +154,12 @@ expr_or
   ;
 
 expr_or_
-  : OR {System.out.println("Operator: ||");} LPAR expression RPAR expr_or_
+  : OR  {System.out.println("Operator: ||");} LPAR expression RPAR expr_or_
   |
   ;
 
 expr_and
-  : LPAR expression RPAR expr_and_
+  : LPAR expression  RPAR expr_and_
   | expr_eq
   ;
 
@@ -182,7 +182,7 @@ expr_cmp
   : expr_add_sub expr_cmp_
   ;
 
-expr_cmp_
+expr_cmp_ //TODO: place of prints
   : GTR  {System.out.println("Operator: >");} expr_add_sub expr_cmp_
   | LES {System.out.println("Operator: <");} expr_add_sub expr_cmp_
   | GEQ {System.out.println("Operator: >=");} expr_add_sub expr_cmp_
