@@ -20,7 +20,7 @@ normalArgs : ((declerationArg COMMA)* declerationArg) ;
 defaultArgs : ((defaultArg COMMA)* defaultArg)? ;
 
 declerationArgs : (normalArgs (COMMA LBRACKET defaultArgs RBRACKET)?) |
-                   normalArgs | LBRACKET defaultArgs RBRACKET | //epsilon
+                   | LBRACKET defaultArgs RBRACKET | //epsilon
                    ;
 
 //      Pattern-Decleration-Rules:
@@ -73,7 +73,7 @@ listAccess: IDENTIFIER (LBRACKET (expression) RBRACKET)+;
 
 //      Condition :
 
-condition :  expression | (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
+condition :  (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
 
 //      Calls:
 
@@ -254,11 +254,11 @@ elseLoopBlock : ELSE {System.out.println("Decision: ELSE");} loopBody END_OF_SCO
 
 next : (NEXT SEMICOLON {System.out.println("Control: NEXT");}) | nextif ;
 
-nextif : NEXT IF {System.out.println("Control: NEXT");} LPAR condition RPAR SEMICOLON ;
+nextif : NEXT IF {System.out.println("Control: NEXT");} condition SEMICOLON ;
 
 break : (BREAK SEMICOLON {System.out.println("Control: BREAK");}) | breakif ;
 
-breakif : BREAK IF {System.out.println("Control: BREAK");} LPAR condition RPAR SEMICOLON ;
+breakif : BREAK IF {System.out.println("Control: BREAK");} condition SEMICOLON ;
 
 //
 
@@ -358,4 +358,3 @@ IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 SINGLE_LINE_COMMENT:    '#' ~[\r\n]* -> skip;
 MULTY_LINE_COMMENT:'=begin' .*? '=end' -> skip;
 WS:         [ \t\r\n] [ \t\r\n]? [ \t\r\n]? -> skip;
-
