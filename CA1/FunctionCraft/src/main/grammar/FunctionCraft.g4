@@ -1,23 +1,24 @@
 grammar FunctionCraft;
 
-program : (function | comment | pattern)* main comment* ;
-main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN");} body returnStatement? END_OF_SCOPE;
 
-comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
+program : (function | comment | pattern)* main comment* ;
+
+//Declerations:
+
+main : FUNCTION MAIN LPAR RPAR {System.out.println("MAIN");} body returnStatement? END_OF_SCOPE;
 
 pattern : patternDeclaration (('\r\n    |' | '\r\n\t|') condition ASSIGN expression)+ SEMICOLON;
 
-indentation : INDENT;
-
-
 patternDeclaration : PATTERN name = IDENTIFIER {System.out.println("PatternDec: "+$name.text);} LPAR (declerationArgs) RPAR ;//shayad lazem shod next line ezafe she!
 
+comment : SINGLE_LINE_COMMENT | MULTY_LINE_COMMENT ;
+
 declerationArgs : (normalArgs (COMMA LBRACKET defaultArgPlural RBRACKET)?) |
-                   normalArgs | LBRACKET defaultArgPlural RBRACKET | //epsilon; //TODO: can bracets be empty?
+                   normalArgs | LBRACKET defaultArgPlural RBRACKET | //epsilon
                    ;
 normalArgs : ((declerationArg COMMA)* declerationArg);
 
-declerationArg : IDENTIFIER ;   //arg name while decleration
+declerationArg : IDENTIFIER ;
 
 defaultArg : declerationArg ASSIGN expression ;
 
@@ -26,8 +27,6 @@ defaultArgPlural : ((defaultArg COMMA)* defaultArg) |  ;
 
 //ٰValues
 directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
-
-value : IDENTIFIER | directValue | functionCall | lamdaCall | functionPointer | patternCall | listAccess;
 
 intVal : (PLUS | MINUS)? INT_VAL ;
 
@@ -57,9 +56,8 @@ lamdaCall : lambdaFuncDecleration LPAR inputArgs RPAR ;
 
 body : (statement | comment)* ;
 
-assignmentStatement: name = IDENTIFIER ((LBRACKET (expression) RBRACKET)+)? {System.out.println("Assignment: "+$name.text);} assignmentOperators expression; //a[i] = 5
+assignmentStatement: name = IDENTIFIER ((LBRACKET (expression) RBRACKET)+)? {System.out.println("Assignment: "+$name.text);} assignmentOperators expression;
 
-//TODO: doesnt work
 statement : (( assignmentStatement | lambdaFuncDecleration | expression | functionCall) SEMICOLON) | ifStatement | loopDo | forLoop;
 
 // IF-ELSEIF-ELSE RULES:
@@ -126,14 +124,7 @@ puts : PUTS {System.out.println("Built-In: PUTS");} LPAR expression RPAR ;
 
 push : PUSH {System.out.println("Built-In: PUSH");} LPAR expression COMMA expression RPAR ;
 
-//elementAccess : expression LBRACKET expression RBRACKET ;
-
-//declaration : IDENTIFIER assignment expression;
-
-//assignment : ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN | MOD_ASSIGN ;
-
-assignmentOperators : ASSIGN| PLUS_ASSIGN | MINUS_ASSIGN |MULT_ASSIGN |DIV_ASSIGN |MOD_ASSIGN; //operators:      = += -= *= /= %=
-//append: expression APPEND expression ;
+assignmentOperators : ASSIGN| PLUS_ASSIGN | MINUS_ASSIGN |MULT_ASSIGN |DIV_ASSIGN |MOD_ASSIGN;
 
 expression
   : expr_append
@@ -234,54 +225,8 @@ expr_other
   | lambdaFuncDecleration
   |patternCall
   ;
-//  | primitive_value
-//  | matching
-//  | function_ptr
-
-//
-//expression : append | orExpression ;
-//
-//orExpression : or | andExpression ;
-//
-//andExpression : and | equalityExpression ;
-//
-//equalityExpression : equality | comparisonExpression ;
-//
-//comparisonExpression : comparison | incrementOrDecrementExpression ;
-//
-//incrementOrDecrementExpression : incrementOrDecrement | multOrDevideOrRemainderExpression ;
-//
-//multOrDevideOrRemainderExpression : multOrDevideOrRemainder | unaryPrefixExpression ;
-//
-//unaryPrefixExpression : unaryPrefix | unaryPostfixExpression ;
-//
-//unaryPostfixExpression : unaryPostfix | elementAccessExpression ;
-//
-//elementAccessExpression : elementAccess | parenthesesExpression ;
-//
-//parenthesesExpression : LPAR expression RPAR ;
-//
-//unaryPostfix : expression unaryPostfixOperator ;
-//
-//unaryPrefix : unaryPostfixOperator expression ;
-//
-//multOrDevideOrRemainder : expression multDevideRemainderOperator expression ;
-//
-//incrementOrDecrement : expression plusMinusOperator ;
-//
-//comparison : expression comparisonOperator expression ;
-//
-//equality : expression equalityOperator expression ;
-//
-//and : expression AND expression ;
-//
-//or : expression OR expression ;
-//
-
-
 
 // LEXICAL RULES
-
 // Keywords
 
 FUNCTION:     'def';
@@ -366,14 +311,10 @@ LBRACE:    '{';
 RBRACE:    '}';
 COMMA:     ',';
 SEMICOLON: ';';
-CASE:      '\t|' | '    |';
 DOT: '.';
 COLON: ':';
 
-// Othercr
-INDENT : [ \t]+ -> channel(HIDDEN);//, type(INDENT);
-//NEW_LINE : '\r\n';
-NEW_LINE : '\r'? '\n' -> channel(HIDDEN);//,type(NEW_LINE);
+// Other characters
 
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 SINGLE_LINE_COMMENT:    '#' ~[\r\n]* -> skip;
