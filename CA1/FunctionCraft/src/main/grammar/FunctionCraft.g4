@@ -29,7 +29,7 @@ patternDeclaration : PATTERN name = IDENTIFIER
                      {System.out.println("PatternDec: "+$name.text);}
                      LPAR (declerationArgs) RPAR ;
 
-pattern : patternDeclaration (('\n    |' | '\n\t|') condition ASSIGN expression)+ SEMICOLON;
+pattern : patternDeclaration (('\r\n    |' | '\r\n\t|' | '\n    |' | '\n\t|') condition ASSIGN expression)+ SEMICOLON;
 
 //      Function-Decleration-Rules:
 
