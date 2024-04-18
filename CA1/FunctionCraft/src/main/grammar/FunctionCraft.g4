@@ -19,7 +19,7 @@ normalArgs : ((declerationArg COMMA)* declerationArg) ;
 
 defaultArgs : ((defaultArg COMMA)* defaultArg)? ;
 
-declerationArgs : (normalArgs (COMMA LBRACKET defaultArgs RBRACKET)?) |
+declerationArgs : (normalArgs (COMMA LBRACKET defaultArgs RBRACKET)?)
                    | LBRACKET defaultArgs RBRACKET | //epsilon
                    ;
 
@@ -29,7 +29,7 @@ patternDeclaration : PATTERN name = IDENTIFIER
                      {System.out.println("PatternDec: "+$name.text);}
                      LPAR (declerationArgs) RPAR ;
 
-pattern : patternDeclaration (('\r\n    |' | '\r\n\t|') condition ASSIGN expression)+ SEMICOLON;
+pattern : patternDeclaration (('\n    |' | '\n\t|') condition ASSIGN expression)+ SEMICOLON;
 
 //      Function-Decleration-Rules:
 
@@ -59,7 +59,7 @@ logicalOperator : AND | OR | NOT ;
 
 //      Direct-Values:
 
-directValue : intVal | STRING_VAL | floatVal | booleanVal | list;
+directValue : intVal | STRING_VAL | floatVal | booleanVal ;
 
 intVal : (PLUS | MINUS)? INT_VAL ;
 
@@ -73,7 +73,7 @@ listAccess: IDENTIFIER (LBRACKET (expression) RBRACKET)+;
 
 //      Condition :
 
-condition :  (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
+condition : (LPAR expression RPAR logicalOperator)* LPAR expression RPAR ;
 
 //      Calls:
 
