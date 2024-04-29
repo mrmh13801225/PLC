@@ -196,7 +196,10 @@ putsStatement returns [PutStatement putRet]://TODO:construct putStatement node
 
 lenStatement returns [LenStatement lenRet]: //TODO:construct lenStatement node
     l = LEN LPAR e = expression
-    RPAR;
+    RPAR {$lenRet.setLine($l.line);
+    $lenRet.setExpression($e.expRet);
+    }
+    ;
 
 pushStatement returns [PushStatement pushRet]://TODO:construct pushStatement node
     p = PUSH LPAR e1 = expression COMMA e2 = expression RPAR SEMICOLLON
