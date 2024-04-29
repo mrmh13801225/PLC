@@ -82,9 +82,9 @@ functionArgumentsDeclaration returns [ArrayList<VarDeclaration> argRet]:
     )? RPAR;
 
 patternMatching returns [PatternDeclaration patternRet]://TODO:cunstruct patterDeclaration node
-    pat = PATTERN
-    patternName = IDENTIFIER
-    LPAR targetVar = IDENTIFIER
+    pat = PATTERN {$patternRet.setLine(pat.line);}
+    patternName = IDENTIFIER {$patternRet.setPatternName(Identifier.createId($patternName.text));}
+    LPAR targetVar = IDENTIFIER {$patternRet.setTargetVariable(Identifier.createId($targetVar.text));}
     RPAR
     (PATTERN_MATCHING_SEPARATOR c = condition
      ASSIGN e = expression
@@ -189,7 +189,10 @@ condition returns [ArrayList<Expression> conditionRet]:
 
 putsStatement returns [PutStatement putRet]://TODO:construct putStatement node
     p = PUTS LPAR e = expression
-    RPAR SEMICOLLON;
+    RPAR SEMICOLLON { putRet.setLine($p.line);
+    putRet.setExpression($e.expRet);
+    }
+    ;
 
 lenStatement returns [LenStatement lenRet]: //TODO:construct lenStatement node
     l = LEN LPAR e = expression
@@ -197,7 +200,10 @@ lenStatement returns [LenStatement lenRet]: //TODO:construct lenStatement node
 
 pushStatement returns [PushStatement pushRet]://TODO:construct pushStatement node
     p = PUSH LPAR e1 = expression COMMA e2 = expression RPAR SEMICOLLON
-    ;
+    {$pushRet.setLine($p.line);
+    $pushRet.setInitial($e1.expRet);
+    $pushRet.setToBeAdded($e2.expRet);
+    };
 
 loopDoStatement returns [LoopDoStatement loopDoRet]:
     l1 = LOOP DO
