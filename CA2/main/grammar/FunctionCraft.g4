@@ -251,7 +251,10 @@ range returns [ArrayList<Expression> rangeRet]://TODO:store all expressions that
 
 
 matchPatternStatement returns [MatchPatternStatement matchPatRet]://TODO:construct match pattern node
-    id = IDENTIFIER DOT m = MATCH LPAR e = expression RPAR
+    id = IDENTIFIER DOT m = MATCH LPAR e = expression RPAR { $matchPatRet.setLine($id.line);
+    $matchPatRet.setPatternId(Identifier.createId($id.text));
+    $matchPatRet.setMatchArgument($e.expRet);
+    }
     ;
 
 chopStatement returns [ChopStatement chopRet]:
