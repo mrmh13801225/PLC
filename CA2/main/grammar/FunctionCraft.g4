@@ -23,9 +23,10 @@ program returns [Program flProgram]:
     m = main{$flProgram.setMain($m.mainRet);};
 
 functionDeclaration returns [FunctionDeclaration functionDeclarationRet]: //TODO:construct functionDeclaration node
-    def = DEF  id = IDENTIFIER
-    f = functionArgumentsDeclaration
-    b = body
+    def = DEF  id = IDENTIFIER {$functionDeclarationRet.setFunctionName(Identifier.createId($id.text));
+    $functionDeclarationRet.setLine(def.line);}
+    f = functionArgumentsDeclaration {$functionDeclarationRet.setArgs($f.argRet);}
+    b = body {$functionDeclarationRet.setBody(b.bodyRet);}
     END
     ;
 

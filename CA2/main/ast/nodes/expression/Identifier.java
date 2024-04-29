@@ -11,4 +11,8 @@ public class Identifier extends Expression{
     public String toString(){return "Identifier:" + this.name;}
     @Override
     public <T> T accept(IVisitor<T> visitor){return visitor.visit(this);}
+
+    public Identifier createId(String name){
+        return new Identifier(name);
+    }
 }
