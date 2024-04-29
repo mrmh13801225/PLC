@@ -232,8 +232,14 @@ loopBody returns [ArrayList<Statement> loopStmts, ArrayList<Expression> loopExps
     )?;
 
 forStatement returns [ForStatement forStRet]://TODO:construct forStatement node
-    f = FOR id = IDENTIFIER IN r = range
-    l = loopBody
+    f = FOR id = IDENTIFIER IN r = range {$forStRet.setLine($f.line);
+    $forStRet.setIteratorId(Identifier.createId($id.text));
+    $forStRet.setRangeExpressions($r.rangeRet);
+    }
+    l = loopBody { $forStRet.setLoopBodyExpressions($l.loopExps);
+    $forStRet.setLoopBody($l.loopStmts);
+    $forStRet.setReturnStatement($l.loopRetStmt);
+    }
     END
     ;
 
