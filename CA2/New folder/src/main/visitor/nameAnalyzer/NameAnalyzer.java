@@ -61,6 +61,19 @@ public class NameAnalyzer extends Visitor<Void> {
         return functionItems ;
     }
 
+    private void visitFunctions (Program program ,ArrayList<FunctionItem> functionItems ){
+        int visitingFunctionIndex = 0;
+        for (PatternDeclaration patternDeclaration : program.getPatternDeclarations()) {
+            FunctionItem functionItem = functionItems.get(visitingFunctionIndex);
+            SymbolTable functionSymbolTable = new SymbolTable();
+            functionItem.setFunctionSymbolTable(functionSymbolTable);
+            SymbolTable.push(functionSymbolTable);
+            patternDeclaration.accept(this);
+            SymbolTable.pop();
+            visitingFunctionIndex += 1;
+        }
+    }
+
     @Override
     public Void visit(Program program) {
         SymbolTable.root = new SymbolTable();
@@ -68,7 +81,7 @@ public class NameAnalyzer extends Visitor<Void> {
 
         //TODO: addFunctions,
         //Code handles duplicate function declarations by renaming and adding them to the symbol table.
-        addFunctionDeclarations(program);
+        ArrayList<FunctionItem> functionItems = addFunctionDeclarations(program);
 
         //addPatterns
         int duplicatePatternId = 0;
@@ -96,6 +109,7 @@ public class NameAnalyzer extends Visitor<Void> {
         }
         //TODO:visitFunctions
         //Iterates over function declarations, assigns symbol tables, visits declarations, and manages symbol table stack.
+        visitFunctions(program ,functionItems );
 
         //visitPatterns
         int visitingPatternIndex = 0;
