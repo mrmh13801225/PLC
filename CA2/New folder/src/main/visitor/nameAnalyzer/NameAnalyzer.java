@@ -24,9 +24,42 @@ import main.symbolTable.item.VarItem;
 import main.visitor.Visitor;
 
 import java.util.ArrayList;
-
 public class NameAnalyzer extends Visitor<Void> {
     public ArrayList<CompileError> nameErrors = new ArrayList<>();
+
+    private void handleFunctionRedefinitistion (FunctionDeclaration functionDeclaration ,int duplicateFunctionId
+            ,ArrayList<FunctionItem> functionItems ,FunctionItem funcItem){
+        nameErrors.add(new RedefinitionOfFunction(functionDeclaration.getLine()
+                ,functionDeclaration.getFunctionName().getName() ));
+        String freshName = funcItem.getName() + "#" + String.valueOf(duplicateFunctionId);
+        Identifier newId = functionDeclaration.getFunctionName();
+        newId.setName(freshName);
+        functionDeclaration.setFunctionName(newId);
+        FunctionItem newItem = new FunctionItem(functionDeclaration);
+        functionItems.add(newItem);
+        try {
+            SymbolTable.root.put(newItem);
+        } catch (ItemAlreadyExists ignored) {
+        }
+    }
+
+    private ArrayList<FunctionItem> addFunctionDeclarations (Program program){
+        ArrayList<FunctionItem> functionItems = new ArrayList<>() ;
+        int duplicateFunctionId = 0;
+
+        for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarations()){
+            FunctionItem funcItem = new FunctionItem(functionDeclaration);
+            try {
+                SymbolTable.root.put(funcItem);
+                functionItems.add(funcItem);
+            } catch (ItemAlreadyExists e){
+                duplicateFunctionId += 1;
+                handleFunctionRedefinitistion(functionDeclaration ,duplicateFunctionId ,functionItems ,funcItem );
+            }
+        }
+
+        return functionItems ;
+    }
 
     @Override
     public Void visit(Program program) {
@@ -35,6 +68,7 @@ public class NameAnalyzer extends Visitor<Void> {
 
         //TODO: addFunctions,
         //Code handles duplicate function declarations by renaming and adding them to the symbol table.
+        addFunctionDeclarations(program);
 
         //addPatterns
         int duplicatePatternId = 0;
