@@ -86,8 +86,8 @@ patternMatching returns [PatternDeclaration patternRet]://TODO:cunstruct patterD
     patternName = IDENTIFIER {$patternRet.setPatternName(Identifier.createId($patternName.text));}
     LPAR targetVar = IDENTIFIER {$patternRet.setTargetVariable(Identifier.createId($targetVar.text));}
     RPAR
-    (PATTERN_MATCHING_SEPARATOR c = condition
-     ASSIGN e = expression
+    (PATTERN_MATCHING_SEPARATOR c = condition { $patternRet.addConditions($c.conditionRet);}
+     ASSIGN e = expression {$patternRet.addReturnExp($e.expRet);}
      )*
     SEMICOLLON;
 
