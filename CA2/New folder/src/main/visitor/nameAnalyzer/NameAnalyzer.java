@@ -120,6 +120,8 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
+    //TODO:Identifier visiting :
+
     @Override
     public Void visit(VarDeclaration varDeclaration) {
         VarItem variableItem = new VarItem(varDeclaration.getName());
@@ -155,6 +157,8 @@ public class NameAnalyzer extends Visitor<Void> {
         visitFunctionBody(functionDeclaration);
         return null;
     }
+
+    //TODO:visiting PaternDeclaration:
 
     @Override
     public Void visit(MainDeclaration mainDeclaration){
@@ -294,7 +298,14 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(AppendExpression appendExpression){
 
+        appendExpression.getAppendee().accept(this);
+        visitExpressions(appendExpression.getAppendeds());
+
+        return null;
+    }
 
     //TODO:visit all other AST nodes and find name errors
 
