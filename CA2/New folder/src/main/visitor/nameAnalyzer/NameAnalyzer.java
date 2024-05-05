@@ -307,6 +307,16 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(BinaryExpression binaryExpression){
+        binaryExpression.getFirstOperand().accept(this);
+        binaryExpression.getSecondOperand().accept(this);
+
+        return null;
+    }
+
+    
+
     //TODO:visit all other AST nodes and find name errors
 
 
