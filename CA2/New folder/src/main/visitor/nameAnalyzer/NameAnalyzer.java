@@ -179,9 +179,9 @@ public class NameAnalyzer extends Visitor<Void> {
 
     //TODO:ifstatement :
 
-    private void visitIfConditions (IfStatement ifStatement){
-        for(Expression cond : ifStatement.getConditions())
-            cond.accept(this);
+    private void visitConditions (ArrayList<Expression> conditions){
+        for(Expression condition : conditions)
+            condition.accept(this);
     }
 
     private void visitStatements (ArrayList<Statement> statements){
@@ -191,7 +191,7 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(IfStatement ifStatement){
-        visitIfConditions(ifStatement);
+        visitConditions(ifStatement.getConditions());
 
         SymbolTable ifStatementSymbolTable = new SymbolTable();
         SymbolTable.push(ifStatementSymbolTable);
@@ -225,6 +225,20 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     //TODO:visit loopDo:
+
+    @Override
+    public Void visit(LoopDoStatement loopDoStatement){
+
+        SymbolTable loopDoStatementSymbolTable = new SymbolTable();
+        SymbolTable.push(loopDoStatementSymbolTable);
+        visitConditions(loopDoStatement.getLoopConditions());
+        visitStatements(loopDoStatement.getLoopBodyStmts());
+        loopDoStatement.getLoopRetStmt().accept(this);
+        SymbolTable.pop();
+        
+        return null;
+
+    }
 
     //TODO:visit forloop:
 
