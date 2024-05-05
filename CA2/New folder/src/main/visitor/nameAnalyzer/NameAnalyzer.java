@@ -127,6 +127,18 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(VarDeclaration varDeclaration) {
+        VarItem variableItem = new VarItem(varDeclaration.getName());
+        try {
+            SymbolTable.top.put(variableItem);
+        } catch (ItemAlreadyExists e) {
+            nameErrors.add(new DuplicateArg(varDeclaration.getLine(),
+                    varDeclaration.getName().getName()));
+        }
+        return null;
+    }
+
     private void checkFunctionArgs (FunctionDeclaration functionDeclaration){
         for (VarDeclaration variableDeclaration : functionDeclaration.getArgs()) {
             VarItem variableItem = new VarItem(variableDeclaration.getName());
@@ -148,6 +160,13 @@ public class NameAnalyzer extends Visitor<Void> {
     public Void visit(FunctionDeclaration functionDeclaration) {
         checkFunctionArgs(functionDeclaration);
         visitFunctionBody(functionDeclaration);
+        return null;
+    }
+
+    @Override
+    public Void visit(MainDeclaration mainDeclaration){
+        for (Statement statement : mainDeclaration.getBody())
+            statement.accept(this);
         return null;
     }
 
