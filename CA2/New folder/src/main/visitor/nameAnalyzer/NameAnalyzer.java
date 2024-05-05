@@ -170,6 +170,64 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(ReturnStatement returnStatement){
+        if (returnStatement.hasRetExpression())
+            returnStatement.getReturnExp().accept(this);
+        return null;
+    }
+
+    //TODO:ifstatement :
+
+    @Override
+    public Void visit(PutStatement putStatement){
+        putStatement.getExpression().accept(this);
+        return null;
+    }
+
+    @Override
+    public Void visit(LenStatement lenStatement){
+        lenStatement.getExpression().accept(this);
+        return null;
+    }
+
+    @Override
+    public Void visit(PushStatement pushStatement){
+        pushStatement.getInitial().accept(this);
+        pushStatement.getToBeAdded().accept(this);
+        return null;
+    }
+
+    //TODO:visit loopDo:
+
+    //TODO:visit forloop:
+
+    @Override
+    public Void visit(MatchPatternStatement matchPatternStatement){
+        matchPatternStatement.getMatchArgument().accept(this);
+        return null;
+    }
+
+    @Override
+    public Void visit(ChopStatement chopStatement){
+        chopStatement.getChopExpression().accept(this);
+        return null;
+    }
+
+    @Override
+    public Void visit(ChompStatement chompStatement){
+        chompStatement.getChompExpression().accept(this);
+        return null;
+    }
+
+    //TODO:visit assign expresion:
+
+    @Override
+    public Void visit(ExpressionStatement expressionStatement){
+        expressionStatement.getExpression().accept(this);
+        return null;
+    }
+
 
 
     //TODO:visit all other AST nodes and find name errors
