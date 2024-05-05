@@ -11,6 +11,7 @@ import main.compileError.CompileError;
 import main.compileError.nameErrors.*;
 import main.symbolTable.SymbolTable;
 import main.symbolTable.exceptions.ItemAlreadyExists;
+import main.symbolTable.exceptions.ItemNotFound;
 import main.symbolTable.item.FunctionItem;
 import main.symbolTable.item.PatternItem;
 import main.symbolTable.item.VarItem;
@@ -322,7 +323,54 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
-    
+    private FunctionItem findFunction(Identifier id){
+        try {
+            if (SymbolTable.root.getItem("Function:" + id.getName()) instanceof FunctionItem functionItem)
+                return functionItem ;
+            return null;
+        }catch (ItemNotFound e) {
+            return null;
+        }
+    }
+
+    private boolean hasMismatch(int providedArgsCount ,int wholeArgsCount ,int defaultArgsCount ){
+        return (providedArgsCount > wholeArgsCount) || (providedArgsCount < wholeArgsCount - defaultArgsCount);
+    }
+
+    private void checkForArgsMismatch(AccessExpression accessExpression ,FunctionItem functionItem ){
+        int defaultArgsCount = functionItem.getFunctionDeclaration().countDefaultArgs();
+        int wholeArgsCount = functionItem.getFunctionDeclaration().getArgs().size();
+        int providedArgsCount = accessExpression.getArguments().size();
+        if (hasMismatch(providedArgsCount ,wholeArgsCount ,defaultArgsCount ))
+            nameErrors.add(new ArgMisMatch(accessExpression.getLine(), functionItem.getName()));
+    }
+
+    @Override
+    public Void visit(AccessExpression accessExpression){
+        if (accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Identifier id){
+            FunctionItem functionItem = findFunction(id);
+            if (functionItem != null)
+                checkForArgsMismatch(accessExpression ,functionItem );
+            else
+                nameErrors.add(new FunctionNotDeclared(accessExpression.getLine(), id.getName()));
+        }
+        else if (accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof
+                LambdaExpression lambdaExpression) {
+
+            if (hasMismatch(accessExpression.getArguments().size(), lambdaExpression.getDeclarationArgs().size(),
+                    lambdaExpression.countDefaultArgs()))
+                nameErrors.add(new ArgMisMatch(accessExpression.getLine(), "lambda"));
+
+        }
+        else if(!accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Identifier id){
+            id.accept(this);
+        }
+
+        visitExpressions(accessExpression.getArguments());
+        visitExpressions(accessExpression.getDimentionalAccess());
+
+        return null;
+    }
 
     //TODO:visit all other AST nodes and find name errors
 

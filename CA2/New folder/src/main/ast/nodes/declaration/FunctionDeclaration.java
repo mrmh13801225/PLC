@@ -23,6 +23,15 @@ public class FunctionDeclaration extends Declaration{
     public void addStmt(Statement stmt){this.body.add(stmt);}
     @Override
     public String toString(){return "FunctionDeclaration:" + this.functionName.getName();}
+
+    public int countDefaultArgs(){
+        int count = 0 ;
+        for (VarDeclaration arg : args)
+            if (arg.getDefaultVal() != null)
+                count += 1;
+        return count ;
+    }
+
     @Override
     public <T> T accept(IVisitor<T> visitor){return visitor.visit(this);}
 }

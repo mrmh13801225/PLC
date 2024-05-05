@@ -29,6 +29,14 @@ public class LambdaExpression extends Expression{
     public ArrayList<VarDeclaration> getDeclarationArgs() {
         return declarationArgs;
     }
+
+    public int countDefaultArgs(){
+        int count = 0;
+        for (VarDeclaration arg : declarationArgs)
+            if (arg.getDefaultVal() != null)
+                count += 1;
+        return count;
+    }
     @Override
     public String toString(){return "LambdaExpression";}
     @Override
