@@ -273,9 +273,20 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
-    //TODO:visit assign expresion:
+    //TODO:visit assign statement:
 
+    @Override
+    public Void visit(AssignStatement assignStatement){
+        VarItem variableItem = new VarItem(assignStatement.getAssignedId());
+        try {
+            SymbolTable.top.put(variableItem);
+        } catch (ItemAlreadyExists e){}
+        if(assignStatement.isAccessList())
+            assignStatement.getAccessListExpression().accept(this);
+        assignStatement.getAssignExpression().accept(this);
 
+        return null;
+    }
 
     @Override
     public Void visit(ExpressionStatement expressionStatement){
