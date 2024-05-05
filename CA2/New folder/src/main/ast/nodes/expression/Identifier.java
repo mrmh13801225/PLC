@@ -12,7 +12,9 @@ public class Identifier extends Expression{
     @Override
     public <T> T accept(IVisitor<T> visitor){return visitor.visit(this);}
 
-    public static Identifier createId(String name){
-        return new Identifier(name);
+    public static Identifier createId(String name ,int line){
+        Identifier id = new Identifier(name);
+        id.setLine(line);
+        return id ;
     }
 }

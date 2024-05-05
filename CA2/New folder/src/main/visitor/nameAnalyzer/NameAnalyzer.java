@@ -63,12 +63,12 @@ public class NameAnalyzer extends Visitor<Void> {
 
     private void visitFunctions (Program program ,ArrayList<FunctionItem> functionItems ){
         int visitingFunctionIndex = 0;
-        for (PatternDeclaration patternDeclaration : program.getPatternDeclarations()) {
+        for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarations()) {
             FunctionItem functionItem = functionItems.get(visitingFunctionIndex);
             SymbolTable functionSymbolTable = new SymbolTable();
             functionItem.setFunctionSymbolTable(functionSymbolTable);
             SymbolTable.push(functionSymbolTable);
-            patternDeclaration.accept(this);
+            functionDeclaration.accept(this);
             SymbolTable.pop();
             visitingFunctionIndex += 1;
         }
@@ -124,6 +124,50 @@ public class NameAnalyzer extends Visitor<Void> {
         }
         //visitMain
         program.getMain().accept(this);
+        return null;
+    }
+
+    private void checkFunctionArgs (FunctionDeclaration functionDeclaration){
+        for (VarDeclaration variableDeclaration : functionDeclaration.getArgs()) {
+            VarItem variableItem = new VarItem(variableDeclaration.getName());
+            if(variableItem.getName().equals(functionDeclaration.getFunctionName().getName())){
+                nameErrors.add(new IdenticalArgFunctionName(functionDeclaration.getLine(),
+                        functionDeclaration.getFunctionName().getName()));
+            }
+            variableDeclaration.accept(this);
+        }
+    }
+
+    private void visitFunctionBody(FunctionDeclaration functionDeclaration){
+        for (Statement stmt : functionDeclaration.getBody()) {
+            stmt.accept(this);
+        }
+    }
+
+    @Override
+    public Void visit(FunctionDeclaration functionDeclaration) {
+        checkFunctionArgs(functionDeclaration);
+        visitFunctionBody(functionDeclaration);
+        return null;
+    }
+
+    @Override
+    public Void visit(PatternDeclaration patternDeclaration){
+        // Should add validation
+        VarItem varItem = new VarItem(patternDeclaration.getTargetVariable());
+        try {
+            SymbolTable.top.put(varItem);
+        } catch (ItemAlreadyExists e) {}
+        if(patternDeclaration.getTargetVariable().getName().equals(patternDeclaration.getPatternName().getName())){
+            nameErrors.add(new IdenticalArgPatternName(patternDeclaration.getLine(),
+                    patternDeclaration.getPatternName().getName()));
+        }
+        for(Expression cond : patternDeclaration.getConditions()) {
+            cond.accept(this);
+        }
+        for(Expression returnExp : patternDeclaration.getReturnExp()) {
+            returnExp.accept(this);
+        }
         return null;
     }
 
