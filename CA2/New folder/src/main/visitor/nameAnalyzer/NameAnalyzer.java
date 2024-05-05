@@ -315,6 +315,13 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(UnaryExpression unaryExpression){
+        unaryExpression.getExpression().accept(this);
+
+        return null;
+    }
+
     
 
     //TODO:visit all other AST nodes and find name errors
