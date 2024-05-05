@@ -85,10 +85,10 @@ functionArgumentsDeclaration returns [ArrayList<VarDeclaration> argRet]:
 patternMatching returns [PatternDeclaration patternRet]://TODO:cunstruct patterDeclaration node
     pat = PATTERN
     patternName = IDENTIFIER
-    LPAR targetVar = IDENTIFIER {$patternRet.setTargetVariable(Identifier.createId($targetVar.text));}
+    LPAR targetVar = IDENTIFIER
     { $patternRet = new PatternDeclaration(Identifier.createId($patternName.text ,$patternName.line ))
     , Identifier.createId($targetVar.text ,$targetVar.line )) );
-    $patternRet.setLine(pat.line);
+    $patternRet.setLine($pat.line);
     }
     RPAR
     (PATTERN_MATCHING_SEPARATOR c = condition { $patternRet.addConditions($c.conditionRet);}
@@ -346,7 +346,7 @@ expression returns [Expression expRet]:
      if ($e1.expRet instanceof AppendExpression append){
          append.addAppendedExpression($e2.expRet);
      }
-     $expRet.setLine($e1.line);}
+     $expRet.setLine($e1.expRet.getLine());}
 
     //TODO:construct append expression node.the left most expression is appendee and others are appended.
     | e3 = eqaulityExpression {$expRet = $e3.expRet;};

@@ -151,25 +151,7 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
-    @Override
-    public Void visit(PatternDeclaration patternDeclaration){
-        // Should add validation
-        VarItem varItem = new VarItem(patternDeclaration.getTargetVariable());
-        try {
-            SymbolTable.top.put(varItem);
-        } catch (ItemAlreadyExists e) {}
-        if(patternDeclaration.getTargetVariable().getName().equals(patternDeclaration.getPatternName().getName())){
-            nameErrors.add(new IdenticalArgPatternName(patternDeclaration.getLine(),
-                    patternDeclaration.getPatternName().getName()));
-        }
-        for(Expression cond : patternDeclaration.getConditions()) {
-            cond.accept(this);
-        }
-        for(Expression returnExp : patternDeclaration.getReturnExp()) {
-            returnExp.accept(this);
-        }
-        return null;
-    }
+
 
     //TODO:visit all other AST nodes and find name errors
 
