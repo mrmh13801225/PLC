@@ -179,6 +179,32 @@ public class NameAnalyzer extends Visitor<Void> {
 
     //TODO:ifstatement :
 
+    private void visitIfConditions (IfStatement ifStatement){
+        for(Expression cond : ifStatement.getConditions())
+            cond.accept(this);
+    }
+
+    private void visitStatements (ArrayList<Statement> statements){
+        for (Statement statement : statements)
+            statement.accept(this);
+    }
+
+    @Override
+    public Void visit(IfStatement ifStatement){
+        visitIfConditions(ifStatement);
+
+        SymbolTable ifStatementSymbolTable = new SymbolTable();
+        SymbolTable.push(ifStatementSymbolTable);
+        visitStatements(ifStatement.getThenBody());
+        SymbolTable.pop();
+        SymbolTable elseStatementSymbolTable = new SymbolTable();
+        SymbolTable.push(elseStatementSymbolTable);
+        visitStatements(ifStatement.getElseBody());
+        SymbolTable.pop();
+
+        return null;
+    }
+
     @Override
     public Void visit(PutStatement putStatement){
         putStatement.getExpression().accept(this);
