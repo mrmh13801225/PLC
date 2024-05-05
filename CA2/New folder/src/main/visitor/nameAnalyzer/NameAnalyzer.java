@@ -6,18 +6,11 @@ import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.declaration.PatternDeclaration;
 import main.ast.nodes.declaration.VarDeclaration;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.value.FunctionPointer;
-import main.ast.nodes.expression.value.ListValue;
-import main.ast.nodes.expression.value.primitive.BoolValue;
-import main.ast.nodes.expression.value.primitive.FloatValue;
-import main.ast.nodes.expression.value.primitive.IntValue;
-import main.ast.nodes.expression.value.primitive.StringValue;
 import main.ast.nodes.statement.*;
 import main.compileError.CompileError;
 import main.compileError.nameErrors.*;
 import main.symbolTable.SymbolTable;
 import main.symbolTable.exceptions.ItemAlreadyExists;
-import main.symbolTable.exceptions.ItemNotFound;
 import main.symbolTable.item.FunctionItem;
 import main.symbolTable.item.PatternItem;
 import main.symbolTable.item.VarItem;
@@ -179,7 +172,7 @@ public class NameAnalyzer extends Visitor<Void> {
 
     //TODO:ifstatement :
 
-    private void visitConditions (ArrayList<Expression> conditions){
+    private void visitExpressions(ArrayList<Expression> conditions){
         for(Expression condition : conditions)
             condition.accept(this);
     }
@@ -191,7 +184,7 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(IfStatement ifStatement){
-        visitConditions(ifStatement.getConditions());
+        visitExpressions(ifStatement.getConditions());
 
         SymbolTable ifStatementSymbolTable = new SymbolTable();
         SymbolTable.push(ifStatementSymbolTable);
@@ -231,16 +224,36 @@ public class NameAnalyzer extends Visitor<Void> {
 
         SymbolTable loopDoStatementSymbolTable = new SymbolTable();
         SymbolTable.push(loopDoStatementSymbolTable);
-        visitConditions(loopDoStatement.getLoopConditions());
+        visitExpressions(loopDoStatement.getLoopConditions());
         visitStatements(loopDoStatement.getLoopBodyStmts());
         loopDoStatement.getLoopRetStmt().accept(this);
         SymbolTable.pop();
-        
+
         return null;
 
     }
 
     //TODO:visit forloop:
+
+    @Override
+    public Void visit(ForStatement forStatement){
+
+        visitExpressions(forStatement.getRangeExpressions());
+
+        SymbolTable forStatementSymbolTable = new SymbolTable();
+        SymbolTable.push(forStatementSymbolTable);
+
+        try {
+            SymbolTable.top.put(new VarItem(forStatement.getIteratorId()));
+        } catch (ItemAlreadyExists e) {}
+        visitExpressions(forStatement.getLoopBodyExpressions());
+        visitStatements(forStatement.getLoopBody());
+        forStatement.getReturnStatement().accept(this);
+
+        SymbolTable.pop();
+
+        return null;
+    }
 
     @Override
     public Void visit(MatchPatternStatement matchPatternStatement){
@@ -261,6 +274,8 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     //TODO:visit assign expresion:
+
+
 
     @Override
     public Void visit(ExpressionStatement expressionStatement){
