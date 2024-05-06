@@ -4,6 +4,8 @@ import main.symbolTable.exceptions.ItemAlreadyExists;
 import main.symbolTable.exceptions.ItemNotFound;
 import main.symbolTable.item.SymbolTableItem;
 import main.symbolTable.utils.Stack;
+import java.util.Iterator;
+import java.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,5 +37,25 @@ public class SymbolTable {
             return symbolTableItem;
         }
         throw new ItemNotFound();
+    }
+
+    private SymbolTableItem findItemInStack (String key){
+        int count = 0 ;
+        while (stack.hasElement(count)){
+            SymbolTable st = stack.peek(count);
+            try {
+                return st.getItem(key);
+            } catch (ItemNotFound e){}
+            count += 1;
+        }
+        return null ;
+    }
+
+    public SymbolTableItem getItemFromAllScopes (String key){
+        try {
+            return this.getItem(key);
+        } catch (ItemNotFound e) {}
+        SymbolTableItem symbolTableItem = findItemInStack(key);
+        if ()
     }
 }

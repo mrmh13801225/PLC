@@ -124,6 +124,17 @@ public class NameAnalyzer extends Visitor<Void> {
     //TODO:Identifier visiting :
 
     @Override
+    public Void visit(Identifier identifier){
+        try {
+            SymbolTable.top.getItem("VAR:" + identifier.getName());
+        } catch (ItemNotFound e) {
+            nameErrors.add(new VariableNotDeclared(identifier.getLine(),
+                    identifier.getName()));
+        }
+        return null;
+    }
+
+    @Override
     public Void visit(VarDeclaration varDeclaration) {
         VarItem variableItem = new VarItem(varDeclaration.getName());
         try {
@@ -154,8 +165,10 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(FunctionDeclaration functionDeclaration) {
+
         checkFunctionArgs(functionDeclaration);
         visitFunctionBody(functionDeclaration);
+
         return null;
     }
 
@@ -163,8 +176,10 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(MainDeclaration mainDeclaration){
+
         for (Statement statement : mainDeclaration.getBody())
             statement.accept(this);
+
         return null;
     }
 
@@ -235,7 +250,6 @@ public class NameAnalyzer extends Visitor<Void> {
         SymbolTable.pop();
 
         return null;
-
     }
 
     //TODO:visit forloop:
@@ -247,7 +261,6 @@ public class NameAnalyzer extends Visitor<Void> {
 
         SymbolTable forStatementSymbolTable = new SymbolTable();
         SymbolTable.push(forStatementSymbolTable);
-
         try {
             SymbolTable.top.put(new VarItem(forStatement.getIteratorId()));
         } catch (ItemAlreadyExists e) {}
@@ -256,7 +269,6 @@ public class NameAnalyzer extends Visitor<Void> {
         forStatement.getReturnStatement().accept(this);
 
         SymbolTable.pop();
-
         return null;
     }
 
@@ -289,7 +301,6 @@ public class NameAnalyzer extends Visitor<Void> {
         if(assignStatement.isAccessList())
             assignStatement.getAccessListExpression().accept(this);
         assignStatement.getAssignExpression().accept(this);
-
         return null;
     }
 
@@ -346,7 +357,7 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(AccessExpression accessExpression){
+    public Void visit(AccessExpression accessExpression){ // TODO :check for potential bugs
         if (accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Identifier id){
             FunctionItem functionItem = findFunction(id);
             if (functionItem != null)
@@ -361,9 +372,11 @@ public class NameAnalyzer extends Visitor<Void> {
                     lambdaExpression.countDefaultArgs()))
                 nameErrors.add(new ArgMisMatch(accessExpression.getLine(), "lambda"));
 
+            visitStatements(lambdaExpression.getBody());//TODO : check for potential bugs
+
         }
-        else if(!accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Identifier id){
-            id.accept(this);
+        else if(!accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Expression ex){
+            ex.accept(this);//TODO : check for potential bugs
         }
 
         visitExpressions(accessExpression.getArguments());

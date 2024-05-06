@@ -22,4 +22,17 @@ public class Stack <T>{
         elements.remove(this.top + 1);
         return popped;
     }
+
+    public T peek(int i){
+        if (top - i < 0)
+            return null;
+        return elements.get(top-i);//TODO:potential bug
+    }
+
+    public boolean hasElement(int i){
+        if (top - i < 0)
+            return false;
+        return true;
+    }
+
 }
