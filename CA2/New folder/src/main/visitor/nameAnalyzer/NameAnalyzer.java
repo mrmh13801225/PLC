@@ -152,6 +152,11 @@ public class NameAnalyzer extends Visitor<Void> {
             nameErrors.add(new DuplicateArg(varDeclaration.getLine(),
                     varDeclaration.getName().getName()));
         }
+
+        varDeclaration.getName().accept(this);
+        if (varDeclaration.getDefaultVal() != null)
+            varDeclaration.getDefaultVal().accept(this);
+
         return null;
     }
 
@@ -344,6 +349,7 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(BinaryExpression binaryExpression) {
+
         binaryExpression.getFirstOperand().accept(this);
         binaryExpression.getSecondOperand().accept(this);
 
@@ -352,6 +358,7 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(UnaryExpression unaryExpression) {
+
         unaryExpression.getExpression().accept(this);
 
         return null;
