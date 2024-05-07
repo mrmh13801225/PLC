@@ -21,13 +21,16 @@ import main.symbolTable.item.VarItem;
 import main.visitor.Visitor;
 
 import java.util.ArrayList;
+
 public class NameAnalyzer extends Visitor<Void> {
     public ArrayList<CompileError> nameErrors = new ArrayList<>();
 
-    private void handleFunctionRedefinitistion (FunctionDeclaration functionDeclaration ,int duplicateFunctionId
-            ,ArrayList<FunctionItem> functionItems ,FunctionItem funcItem){
+    private String patternName ;
+
+    private void handleFunctionRedefinitistion(FunctionDeclaration functionDeclaration, int duplicateFunctionId
+            , ArrayList<FunctionItem> functionItems, FunctionItem funcItem) {
         nameErrors.add(new RedefinitionOfFunction(functionDeclaration.getLine()
-                ,functionDeclaration.getFunctionName().getName() ));
+                , functionDeclaration.getFunctionName().getName()));
         String freshName = funcItem.getName() + "#" + String.valueOf(duplicateFunctionId);
         Identifier newId = functionDeclaration.getFunctionName();
         newId.setName(freshName);
@@ -40,25 +43,25 @@ public class NameAnalyzer extends Visitor<Void> {
         }
     }
 
-    private ArrayList<FunctionItem> addFunctionDeclarations (Program program){
-        ArrayList<FunctionItem> functionItems = new ArrayList<>() ;
+    private ArrayList<FunctionItem> addFunctionDeclarations(Program program) {
+        ArrayList<FunctionItem> functionItems = new ArrayList<>();
         int duplicateFunctionId = 0;
 
-        for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarations()){
+        for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarations()) {
             FunctionItem funcItem = new FunctionItem(functionDeclaration);
             try {
                 SymbolTable.root.put(funcItem);
                 functionItems.add(funcItem);
-            } catch (ItemAlreadyExists e){
+            } catch (ItemAlreadyExists e) {
                 duplicateFunctionId += 1;
-                handleFunctionRedefinitistion(functionDeclaration ,duplicateFunctionId ,functionItems ,funcItem );
+                handleFunctionRedefinitistion(functionDeclaration, duplicateFunctionId, functionItems, funcItem);
             }
         }
 
-        return functionItems ;
+        return functionItems;
     }
 
-    private void visitFunctions (Program program ,ArrayList<FunctionItem> functionItems ){
+    private void visitFunctions(Program program, ArrayList<FunctionItem> functionItems) {
         int visitingFunctionIndex = 0;
         for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarations()) {
             FunctionItem functionItem = functionItems.get(visitingFunctionIndex);
@@ -75,6 +78,7 @@ public class NameAnalyzer extends Visitor<Void> {
     public Void visit(Program program) {
         SymbolTable.root = new SymbolTable();
         SymbolTable.top = new SymbolTable();
+        patternName = null;
 
         //TODO: addFunctions,
         //Code handles duplicate function declarations by renaming and adding them to the symbol table.
@@ -106,7 +110,7 @@ public class NameAnalyzer extends Visitor<Void> {
         }
         //TODO:visitFunctions
         //Iterates over function declarations, assigns symbol tables, visits declarations, and manages symbol table stack.
-        visitFunctions(program ,functionItems );
+        visitFunctions(program, functionItems);
 
         //visitPatterns
         int visitingPatternIndex = 0;
@@ -115,7 +119,9 @@ public class NameAnalyzer extends Visitor<Void> {
             SymbolTable patternSymbolTable = new SymbolTable();
             patternItem.setPatternSymbolTable(patternSymbolTable);
             SymbolTable.push(patternSymbolTable);
+            patternName = patternItem.getName();
             patternDeclaration.accept(this);
+            patternName = null ;
             SymbolTable.pop();
             visitingPatternIndex += 1;
         }
@@ -127,7 +133,7 @@ public class NameAnalyzer extends Visitor<Void> {
     //TODO:Identifier visiting :
 
     @Override
-    public Void visit(Identifier identifier){
+    public Void visit(Identifier identifier) {
         SymbolTableItem symbolTableItem = SymbolTable.getItemFromAllScopes("VAR:" + identifier.getName());
 
         if (symbolTableItem == null)
@@ -149,10 +155,9 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
-    private void checkFunctionArgs (FunctionDeclaration functionDeclaration){
+    private void checkFunctionArgs(FunctionDeclaration functionDeclaration) {
         for (VarDeclaration variableDeclaration : functionDeclaration.getArgs()) {
-            VarItem variableItem = new VarItem(variableDeclaration.getName());
-            if(variableItem.getName().equals(functionDeclaration.getFunctionName().getName())){
+            if (variableDeclaration.getName().getName().equals(functionDeclaration.getFunctionName().getName())) {
                 nameErrors.add(new IdenticalArgFunctionName(functionDeclaration.getLine(),
                         functionDeclaration.getFunctionName().getName()));
             }
@@ -160,7 +165,7 @@ public class NameAnalyzer extends Visitor<Void> {
         }
     }
 
-    private void visitFunctionBody(FunctionDeclaration functionDeclaration){
+    private void visitFunctionBody(FunctionDeclaration functionDeclaration) {
         for (Statement stmt : functionDeclaration.getBody()) {
             stmt.accept(this);
         }
@@ -177,11 +182,12 @@ public class NameAnalyzer extends Visitor<Void> {
 
     //TODO:visiting PatternDeclaration:
 
-    public Void visit(PatternDeclaration patternDeclaration){
+    public Void visit(PatternDeclaration patternDeclaration) {
 
         try {
             SymbolTable.top.put(new VarItem(patternDeclaration.getTargetVariable()));
-        } catch (ItemAlreadyExists ignored) {}
+        } catch (ItemAlreadyExists ignored) {
+        }
 
         visitExpressions(patternDeclaration.getConditions());
         visitExpressions(patternDeclaration.getReturnExp());
@@ -190,7 +196,7 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(MainDeclaration mainDeclaration){
+    public Void visit(MainDeclaration mainDeclaration) {
 
         for (Statement statement : mainDeclaration.getBody())
             statement.accept(this);
@@ -199,7 +205,7 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(ReturnStatement returnStatement){
+    public Void visit(ReturnStatement returnStatement) {
         if (returnStatement.hasRetExpression())
             returnStatement.getReturnExp().accept(this);
         return null;
@@ -207,18 +213,18 @@ public class NameAnalyzer extends Visitor<Void> {
 
     //TODO:ifstatement :
 
-    private void visitExpressions(ArrayList<Expression> conditions){
-        for(Expression condition : conditions)
+    private void visitExpressions(ArrayList<Expression> conditions) {
+        for (Expression condition : conditions)
             condition.accept(this);
     }
 
-    private void visitStatements (ArrayList<Statement> statements){
+    private void visitStatements(ArrayList<Statement> statements) {
         for (Statement statement : statements)
             statement.accept(this);
     }
 
     @Override
-    public Void visit(IfStatement ifStatement){
+    public Void visit(IfStatement ifStatement) {
         visitExpressions(ifStatement.getConditions());
 
         SymbolTable ifStatementSymbolTable = new SymbolTable();
@@ -234,19 +240,19 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(PutStatement putStatement){
+    public Void visit(PutStatement putStatement) {
         putStatement.getExpression().accept(this);
         return null;
     }
 
     @Override
-    public Void visit(LenStatement lenStatement){
+    public Void visit(LenStatement lenStatement) {
         lenStatement.getExpression().accept(this);
         return null;
     }
 
     @Override
-    public Void visit(PushStatement pushStatement){
+    public Void visit(PushStatement pushStatement) {
         pushStatement.getInitial().accept(this);
         pushStatement.getToBeAdded().accept(this);
         return null;
@@ -255,7 +261,7 @@ public class NameAnalyzer extends Visitor<Void> {
     //TODO:visit loopDo:
 
     @Override
-    public Void visit(LoopDoStatement loopDoStatement){
+    public Void visit(LoopDoStatement loopDoStatement) {
 
         SymbolTable loopDoStatementSymbolTable = new SymbolTable();
         SymbolTable.push(loopDoStatementSymbolTable);
@@ -270,7 +276,7 @@ public class NameAnalyzer extends Visitor<Void> {
     //TODO:visit forloop:
 
     @Override
-    public Void visit(ForStatement forStatement){
+    public Void visit(ForStatement forStatement) {
 
         visitExpressions(forStatement.getRangeExpressions());
 
@@ -278,7 +284,8 @@ public class NameAnalyzer extends Visitor<Void> {
         SymbolTable.push(forStatementSymbolTable);
         try {
             SymbolTable.top.put(new VarItem(forStatement.getIteratorId()));
-        } catch (ItemAlreadyExists e) {}
+        } catch (ItemAlreadyExists e) {
+        }
         visitExpressions(forStatement.getLoopBodyExpressions());
         visitStatements(forStatement.getLoopBody());
         forStatement.getReturnStatement().accept(this);
@@ -288,19 +295,19 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(MatchPatternStatement matchPatternStatement){
+    public Void visit(MatchPatternStatement matchPatternStatement) {
         matchPatternStatement.getMatchArgument().accept(this);
         return null;
     }
 
     @Override
-    public Void visit(ChopStatement chopStatement){
+    public Void visit(ChopStatement chopStatement) {
         chopStatement.getChopExpression().accept(this);
         return null;
     }
 
     @Override
-    public Void visit(ChompStatement chompStatement){
+    public Void visit(ChompStatement chompStatement) {
         chompStatement.getChompExpression().accept(this);
         return null;
     }
@@ -308,25 +315,26 @@ public class NameAnalyzer extends Visitor<Void> {
     //TODO:visit assign statement:
 
     @Override
-    public Void visit(AssignStatement assignStatement){
+    public Void visit(AssignStatement assignStatement) {
         VarItem variableItem = new VarItem(assignStatement.getAssignedId());
         try {
             SymbolTable.top.put(variableItem);
-        } catch (ItemAlreadyExists e){}
-        if(assignStatement.isAccessList())
+        } catch (ItemAlreadyExists e) {
+        }
+        if (assignStatement.isAccessList())
             assignStatement.getAccessListExpression().accept(this);
         assignStatement.getAssignExpression().accept(this);
         return null;
     }
 
     @Override
-    public Void visit(ExpressionStatement expressionStatement){
+    public Void visit(ExpressionStatement expressionStatement) {
         expressionStatement.getExpression().accept(this);
         return null;
     }
 
     @Override
-    public Void visit(AppendExpression appendExpression){
+    public Void visit(AppendExpression appendExpression) {
 
         appendExpression.getAppendee().accept(this);
         visitExpressions(appendExpression.getAppendeds());
@@ -335,7 +343,7 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(BinaryExpression binaryExpression){
+    public Void visit(BinaryExpression binaryExpression) {
         binaryExpression.getFirstOperand().accept(this);
         binaryExpression.getSecondOperand().accept(this);
 
@@ -343,54 +351,68 @@ public class NameAnalyzer extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(UnaryExpression unaryExpression){
+    public Void visit(UnaryExpression unaryExpression) {
         unaryExpression.getExpression().accept(this);
 
         return null;
     }
 
-    private FunctionItem findFunction(Identifier id){
+    private FunctionItem findFunction(Identifier id) {
         try {
             if (SymbolTable.root.getItem("Function:" + id.getName()) instanceof FunctionItem functionItem)
-                return functionItem ;
+                return functionItem;
             return null;
-        }catch (ItemNotFound e) {
+        } catch (ItemNotFound e) {
             return null;
         }
     }
 
-    private boolean hasMismatch(int providedArgsCount ,int wholeArgsCount ,int defaultArgsCount ){
+    private boolean hasMismatch(int providedArgsCount, int wholeArgsCount, int defaultArgsCount) {
         return (providedArgsCount > wholeArgsCount) || (providedArgsCount < wholeArgsCount - defaultArgsCount);
     }
 
-    private void checkForArgsMismatch(AccessExpression accessExpression ,FunctionItem functionItem ){
+    private void checkForArgsMismatch(AccessExpression accessExpression, FunctionItem functionItem) {
         int defaultArgsCount = functionItem.getFunctionDeclaration().countDefaultArgs();
         int wholeArgsCount = functionItem.getFunctionDeclaration().getArgs().size();
         int providedArgsCount = accessExpression.getArguments().size();
-        if (hasMismatch(providedArgsCount ,wholeArgsCount ,defaultArgsCount ))
+        if (hasMismatch(providedArgsCount, wholeArgsCount, defaultArgsCount))
             nameErrors.add(new ArgMisMatch(accessExpression.getLine(), functionItem.getName()));
     }
 
+    private PatternItem findPattern (Identifier id){
+        try {//TODO:key prefix may cause bug ;
+            if (SymbolTable.root.getItem("Pattern:" + id.getName()) instanceof PatternItem patternItemItem)
+                return patternItemItem;
+            return null;
+        } catch (ItemNotFound e) {
+            return null;
+        }
+    }
+
     @Override
-    public Void visit(AccessExpression accessExpression){ // TODO :check for potential bugs
-        if (accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Identifier id){
+    public Void visit(AccessExpression accessExpression) { // TODO :check for potential bugs
+        if (accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Identifier id) {
             FunctionItem functionItem = findFunction(id);
             if (functionItem != null)
-                checkForArgsMismatch(accessExpression ,functionItem );
-            else
+                checkForArgsMismatch(accessExpression, functionItem);
+            else if (id.getName().equals(patternName)) {
+                PatternItem pi = findPattern(id);
+                if (hasMismatch(accessExpression.getArguments().size(), 1,
+                        0))
+                    nameErrors.add(new ArgMisMatch(accessExpression.getLine(), "lambda"));
+            } else
                 nameErrors.add(new FunctionNotDeclared(accessExpression.getLine(), id.getName()));
-        }
-        else if (accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof
+        } else if (accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof
                 LambdaExpression lambdaExpression) {
 
             if (hasMismatch(accessExpression.getArguments().size(), lambdaExpression.getDeclarationArgs().size(),
                     lambdaExpression.countDefaultArgs()))
                 nameErrors.add(new ArgMisMatch(accessExpression.getLine(), "lambda"));
 
-            visitStatements(lambdaExpression.getBody());//TODO : check for potential bugs
+            //TODO : check for potential bugs
+            lambdaExpression.accept(this);
 
-        }
-        else if(!accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Expression ex){
+        } else if (!accessExpression.isFunctionCall() && accessExpression.getAccessedExpression() instanceof Expression ex) {
             ex.accept(this);//TODO : check for potential bugs
         }
 
@@ -400,40 +422,38 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
-    private void checkVarDeclarations (ArrayList<VarDeclaration> varDeclarations){
-        for (VarDeclaration varDeclaration : varDeclarations)
+    @Override
+    public Void visit(LambdaExpression lambdaExpression) {
 
+        SymbolTable lambdaSt = new SymbolTable();
+        SymbolTable.push(lambdaSt);
+        for (VarDeclaration varDeclaration : lambdaExpression.getDeclarationArgs())
+            varDeclaration.accept(this);
+        visitStatements(lambdaExpression.getBody());
+        SymbolTable.pop();
+
+        return null;
     }
 
     @Override
-    public Void visit(LambdaExpression lambdaExpression){
-
-
-
-        return null ;
-    }
-
-    @Override
-    public Void visit(ListValue listValue){
+    public Void visit(ListValue listValue) {
 
         visitExpressions(listValue.getElements());
 
-        return null ;
+        return null;
     }
 
     @Override
-    public Void visit(FunctionPointer functionPointer){
+    public Void visit(FunctionPointer functionPointer) {
 
         if (findFunction(functionPointer.getId()) == null)
-            nameErrors.add(new FunctionNotDeclared(functionPointer.getLine() ,functionPointer.getId().getName() ));
+            nameErrors.add(new FunctionNotDeclared(functionPointer.getLine(), functionPointer.getId().getName()));
 
         return null;
     }
 
 
-
     //TODO:visit all other AST nodes and find name errors
-
 
 
 }

@@ -7,7 +7,7 @@ import main.visitor.IVisitor;
 import java.util.ArrayList;
 
 public class LambdaExpression extends Expression{
-        ArrayList<VarDeclaration> declarationArgs = new ArrayList<>();
+    ArrayList<VarDeclaration> declarationArgs = new ArrayList<>();
     ArrayList<Statement> body = new ArrayList<>();
     public LambdaExpression(ArrayList<VarDeclaration> declarationArgs, ArrayList<Statement> body
                             ){
