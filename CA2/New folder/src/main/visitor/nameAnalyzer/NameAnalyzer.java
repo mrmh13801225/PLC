@@ -370,13 +370,9 @@ public class NameAnalyzer extends Visitor<Void> {
                 return functionItem;
             return null;
         } catch (ItemNotFound e) {
-            try {
-                if (SymbolTable.top.getItem("Function:" + id.getName()) instanceof FunctionItem functionItem)
-                    return functionItem;
-                return null;
-            } catch (ItemNotFound ex) {
-                return null;
-            }
+            if (SymbolTable.getItemFromAllScopes("Function:" + id.getName()) instanceof FunctionItem functionItem)
+                return functionItem;
+            return null;
         }
     }
 
