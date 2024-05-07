@@ -37,21 +37,21 @@ public class SymbolTable {
         throw new ItemNotFound();
     }
 
-    private SymbolTableItem findItemInStack (String key){
+    private static SymbolTableItem findItemInStack (String key){
         int count = 0 ;
         while (stack.hasElement(count)){
             SymbolTable st = stack.peek(count);
             try {
                 return st.getItem(key);
-            } catch (ItemNotFound e){}
+            } catch (ItemNotFound ignored){}
             count += 1;
         }
         return null ;
     }
 
-    public SymbolTableItem getItemFromAllScopes (String key){
+    public static SymbolTableItem getItemFromAllScopes (String key){
         try {
-            return this.getItem(key);
+            return top.getItem(key);
         } catch (ItemNotFound ignored) {}
         return findItemInStack(key);
 

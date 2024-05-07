@@ -6,6 +6,8 @@ import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.declaration.PatternDeclaration;
 import main.ast.nodes.declaration.VarDeclaration;
 import main.ast.nodes.expression.*;
+import main.ast.nodes.expression.value.FunctionPointer;
+import main.ast.nodes.expression.value.ListValue;
 import main.ast.nodes.statement.*;
 import main.compileError.CompileError;
 import main.compileError.nameErrors.*;
@@ -14,6 +16,7 @@ import main.symbolTable.exceptions.ItemAlreadyExists;
 import main.symbolTable.exceptions.ItemNotFound;
 import main.symbolTable.item.FunctionItem;
 import main.symbolTable.item.PatternItem;
+import main.symbolTable.item.SymbolTableItem;
 import main.symbolTable.item.VarItem;
 import main.visitor.Visitor;
 
@@ -125,12 +128,12 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(Identifier identifier){
-        try {
-            SymbolTable.top.getItem("VAR:" + identifier.getName());
-        } catch (ItemNotFound e) {
+        SymbolTableItem symbolTableItem = SymbolTable.getItemFromAllScopes("VAR:" + identifier.getName());
+
+        if (symbolTableItem == null)
             nameErrors.add(new VariableNotDeclared(identifier.getLine(),
                     identifier.getName()));
-        }
+
         return null;
     }
 
@@ -172,7 +175,19 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
-    //TODO:visiting PaternDeclaration:
+    //TODO:visiting PatternDeclaration:
+
+    public Void visit(PatternDeclaration patternDeclaration){
+
+        try {
+            SymbolTable.top.put(new VarItem(patternDeclaration.getTargetVariable()));
+        } catch (ItemAlreadyExists ignored) {}
+
+        visitExpressions(patternDeclaration.getConditions());
+        visitExpressions(patternDeclaration.getReturnExp());
+
+        return null;
+    }
 
     @Override
     public Void visit(MainDeclaration mainDeclaration){
@@ -384,6 +399,38 @@ public class NameAnalyzer extends Visitor<Void> {
 
         return null;
     }
+
+    private void checkVarDeclarations (ArrayList<VarDeclaration> varDeclarations){
+        for (VarDeclaration varDeclaration : varDeclarations)
+
+    }
+
+    @Override
+    public Void visit(LambdaExpression lambdaExpression){
+
+
+
+        return null ;
+    }
+
+    @Override
+    public Void visit(ListValue listValue){
+
+        visitExpressions(listValue.getElements());
+
+        return null ;
+    }
+
+    @Override
+    public Void visit(FunctionPointer functionPointer){
+
+        if (findFunction(functionPointer.getId()) == null)
+            nameErrors.add(new FunctionNotDeclared(functionPointer.getLine() ,functionPointer.getId().getName() ));
+
+        return null;
+    }
+
+
 
     //TODO:visit all other AST nodes and find name errors
 
