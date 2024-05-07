@@ -203,8 +203,12 @@ public class NameAnalyzer extends Visitor<Void> {
     @Override
     public Void visit(MainDeclaration mainDeclaration) {
 
+        SymbolTable mainSt = new SymbolTable();
+        SymbolTable.push(mainSt);
+
         for (Statement statement : mainDeclaration.getBody())
             statement.accept(this);
+        SymbolTable.pop();
 
         return null;
     }
