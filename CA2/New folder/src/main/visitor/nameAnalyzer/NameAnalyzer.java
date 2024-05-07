@@ -370,7 +370,13 @@ public class NameAnalyzer extends Visitor<Void> {
                 return functionItem;
             return null;
         } catch (ItemNotFound e) {
-            return null;
+            try {
+                if (SymbolTable.top.getItem("Function:" + id.getName()) instanceof FunctionItem functionItem)
+                    return functionItem;
+                return null;
+            } catch (ItemNotFound ex) {
+                return null;
+            }
         }
     }
 
@@ -452,6 +458,12 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(FunctionPointer functionPointer) {
+
+        FunctionDeclaration fd = new FunctionDeclaration();
+        fd.setFunctionName(functionPointer.getId());
+        try {
+            SymbolTable.top.put(new FunctionItem(fd));
+        } catch (ItemAlreadyExists ignored) { }
 
         if (findFunction(functionPointer.getId()) == null)
             nameErrors.add(new FunctionNotDeclared(functionPointer.getLine(), functionPointer.getId().getName()));
