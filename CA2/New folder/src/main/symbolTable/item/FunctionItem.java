@@ -1,6 +1,7 @@
 package main.symbolTable.item;
 
 import main.ast.nodes.declaration.FunctionDeclaration;
+import main.ast.nodes.expression.Identifier;
 import main.symbolTable.SymbolTable;
 
 public class FunctionItem extends SymbolTableItem{
@@ -28,6 +29,11 @@ public class FunctionItem extends SymbolTableItem{
     public void setFunctionDeclaration(FunctionDeclaration functionDeclaration) {
         this.functionDeclaration = functionDeclaration;
     }
+
+    public FunctionItem copyFunctionItem (Identifier id){
+        return new FunctionItem(this.functionDeclaration.copyFunctionDeclaration(id));
+    }
+
     @Override
     public String getKey() {return START_KEY + this.name;}
 

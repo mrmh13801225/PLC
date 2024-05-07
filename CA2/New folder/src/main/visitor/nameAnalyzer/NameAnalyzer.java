@@ -21,6 +21,7 @@ import main.symbolTable.item.VarItem;
 import main.visitor.Visitor;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class NameAnalyzer extends Visitor<Void> {
     public ArrayList<CompileError> nameErrors = new ArrayList<>();
@@ -333,6 +334,12 @@ public class NameAnalyzer extends Visitor<Void> {
         if (assignStatement.isAccessList())
             assignStatement.getAccessListExpression().accept(this);
         assignStatement.getAssignExpression().accept(this);
+        if (assignStatement.getAssignExpression() instanceof FunctionPointer functionPointer){
+            try {
+                SymbolTable.top.put(Objects.requireNonNull(findFunction(functionPointer.getId())).copyFunctionItem(
+                        assignStatement.getAssignedId()));
+            } catch (ItemAlreadyExists ignored) { }
+        }
         return null;
     }
 
@@ -458,12 +465,6 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(FunctionPointer functionPointer) {
-
-        FunctionDeclaration fd = new FunctionDeclaration();
-        fd.setFunctionName(functionPointer.getId());
-        try {
-            SymbolTable.top.put(new FunctionItem(fd));
-        } catch (ItemAlreadyExists ignored) { }
 
         if (findFunction(functionPointer.getId()) == null)
             nameErrors.add(new FunctionNotDeclared(functionPointer.getLine(), functionPointer.getId().getName()));

@@ -32,6 +32,15 @@ public class FunctionDeclaration extends Declaration{
         return count ;
     }
 
+    public FunctionDeclaration copyFunctionDeclaration (Identifier id){
+        FunctionDeclaration fd = new FunctionDeclaration();
+        fd.setFunctionName(id);
+        fd.setArgs(this.args);
+        fd.setBody(this.body);
+        fd.setLine(this.getLine());
+        return fd;
+    }
+
     @Override
     public <T> T accept(IVisitor<T> visitor){return visitor.visit(this);}
 }
