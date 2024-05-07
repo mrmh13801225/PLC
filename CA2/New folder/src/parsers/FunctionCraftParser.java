@@ -291,7 +291,7 @@ public class FunctionCraftParser extends Parser {
 			_localctx.functionDeclarationRet.setArgs(((FunctionDeclarationContext)_localctx).f.argRet);
 			setState(93);
 			((FunctionDeclarationContext)_localctx).b = body();
-			_localctx.functionDeclarationRet.setBody(b.bodyRet);
+			_localctx.functionDeclarationRet.setBody(((FunctionDeclarationContext)_localctx).b.bodyRet);
 			setState(95);
 			match(END);
 			}
@@ -557,8 +557,8 @@ public class FunctionCraftParser extends Parser {
 			match(LPAR);
 			setState(139);
 			((PatternMatchingContext)_localctx).targetVar = match(IDENTIFIER);
-			 ((PatternMatchingContext)_localctx).patternRet =  new PatternDeclaration(Identifier.createId((((PatternMatchingContext)_localctx).patternName!=null?((PatternMatchingContext)_localctx).patternName.getText():null) ,(((PatternMatchingContext)_localctx).patternName!=null?((PatternMatchingContext)_localctx).patternName.getLine():0) ))
-			    , Identifier.createId((((PatternMatchingContext)_localctx).targetVar!=null?((PatternMatchingContext)_localctx).targetVar.getText():null) ,(((PatternMatchingContext)_localctx).targetVar!=null?((PatternMatchingContext)_localctx).targetVar.getLine():0) )) );
+			 ((PatternMatchingContext)_localctx).patternRet =  new PatternDeclaration(Identifier.createId((((PatternMatchingContext)_localctx).patternName!=null?((PatternMatchingContext)_localctx).patternName.getText():null) ,(((PatternMatchingContext)_localctx).patternName!=null?((PatternMatchingContext)_localctx).patternName.getLine():0) ),
+			    Identifier.createId((((PatternMatchingContext)_localctx).targetVar!=null?((PatternMatchingContext)_localctx).targetVar.getText():null) ,(((PatternMatchingContext)_localctx).targetVar!=null?((PatternMatchingContext)_localctx).targetVar.getLine():0) ));
 			    _localctx.patternRet.setLine((((PatternMatchingContext)_localctx).pat!=null?((PatternMatchingContext)_localctx).pat.getLine():0));
 			    
 			setState(141);
@@ -1850,7 +1850,7 @@ public class FunctionCraftParser extends Parser {
 			setState(353);
 			match(RPAR);
 
-			    ((MatchPatternStatementContext)_localctx).matchPatRet =  new MatchPatternStatement(Identifier.createId((((MatchPatternStatementContext)_localctx).id!=null?((MatchPatternStatementContext)_localctx).id.getText():null)) ,((MatchPatternStatementContext)_localctx).e.expRet );
+			    ((MatchPatternStatementContext)_localctx).matchPatRet =  new MatchPatternStatement(Identifier.createId((((MatchPatternStatementContext)_localctx).id!=null?((MatchPatternStatementContext)_localctx).id.getText():null) ,(((MatchPatternStatementContext)_localctx).id!=null?((MatchPatternStatementContext)_localctx).id.getLine():0)) ,((MatchPatternStatementContext)_localctx).e.expRet );
 			    _localctx.matchPatRet.setLine((((MatchPatternStatementContext)_localctx).id!=null?((MatchPatternStatementContext)_localctx).id.getLine():0));
 			    
 			}

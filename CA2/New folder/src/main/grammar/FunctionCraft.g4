@@ -27,7 +27,7 @@ functionDeclaration returns [FunctionDeclaration functionDeclarationRet]: //TODO
     def = DEF  id = IDENTIFIER {$functionDeclarationRet.setFunctionName(Identifier.createId($id.text ,$id.line));
     $functionDeclarationRet.setLine($def.line);}
     f = functionArgumentsDeclaration {$functionDeclarationRet.setArgs($f.argRet);}
-    b = body {$functionDeclarationRet.setBody(b.bodyRet);}
+    b = body {$functionDeclarationRet.setBody($b.bodyRet);}
     END
     ;
 
@@ -86,8 +86,8 @@ patternMatching returns [PatternDeclaration patternRet]://TODO:cunstruct patterD
     pat = PATTERN
     patternName = IDENTIFIER
     LPAR targetVar = IDENTIFIER
-    { $patternRet = new PatternDeclaration(Identifier.createId($patternName.text ,$patternName.line ))
-    , Identifier.createId($targetVar.text ,$targetVar.line )) );
+    { $patternRet = new PatternDeclaration(Identifier.createId($patternName.text ,$patternName.line ),
+    Identifier.createId($targetVar.text ,$targetVar.line ));
     $patternRet.setLine($pat.line);
     }
     RPAR
@@ -261,7 +261,7 @@ range returns [ArrayList<Expression> rangeRet]://TODO:store all expressions that
 
 matchPatternStatement returns [MatchPatternStatement matchPatRet]://TODO:construct match pattern node
     id = IDENTIFIER DOT m = MATCH LPAR e = expression RPAR {
-    $matchPatRet = new MatchPatternStatement(Identifier.createId($id.text) ,$e.expRet );
+    $matchPatRet = new MatchPatternStatement(Identifier.createId($id.text ,$id.line) ,$e.expRet );
     $matchPatRet.setLine($id.line);
     }
     ;
