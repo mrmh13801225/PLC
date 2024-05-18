@@ -3,7 +3,6 @@ package main.visitor.type;
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.*;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.operators.*;
 import main.ast.nodes.expression.value.*;
 import main.ast.nodes.expression.value.primitive.*;
 import main.ast.nodes.statement.*;
@@ -174,7 +173,7 @@ public class TypeChecker extends Visitor<Type> {
         return new NoType();
     }
     @Override
-    public Type visit(AssignStatement assignStatement){
+    public Type visit(AssignStatement assignStatement) {
         if(assignStatement.isAccessList()){
             // TODO:assignment to list
         }
@@ -183,7 +182,16 @@ public class TypeChecker extends Visitor<Type> {
             // TODO:maybe new type for a variable
             try {
                 SymbolTable.top.put(newVarItem);
-            }catch (ItemAlreadyExists ignored){}
+            }catch (ItemAlreadyExists ignored){
+                try {
+                    VarItem variable = (VarItem) SymbolTable.top.getItem(newVarItem.getKey());
+                    if (!variable.getType().sameType(assignStatement.getAssignExpression().accept(this))){
+                        typeErrors.add(new UnsupportedOperandType(assignStatement.getAssignExpression().getLine(),
+                                assignStatement.getAssignOperator().toString()));
+                        return new NoType(); //TODO:mybe there was no need to this error.
+                    }
+                } catch (ItemNotFound ignored1) {}
+            }
         }
         return new NoType();
     }
