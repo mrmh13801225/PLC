@@ -49,6 +49,16 @@ public class TypeChecker extends Visitor<Type> {
 
         return null;
     }
+
+    ArrayList<ReturnStatement> findReturnStatements (ArrayList<Statement> statements){
+        ArrayList<ReturnStatement> returnStatements = new ArrayList<>();
+        for (Statement statement : statements){
+            if (statement instanceof  ReturnStatement returnStatement)
+                returnStatements.add(returnStatement);
+            else if (statement instanceof )
+        }
+    }
+
     @Override
     public Type visit(FunctionDeclaration functionDeclaration){
         SymbolTable.push(new SymbolTable());
@@ -130,7 +140,7 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(ReturnStatement returnStatement){
         // TODO:Visit return statement.Note that return type of functions are specified here
-        return (returnStatement.hasRetExpression()) ? returnStatement.accept(this) : null;
+        return (returnStatement.hasRetExpression()) ? returnStatement.accept(this) : new NoType();
     }
     @Override
     public Type visit(ExpressionStatement expressionStatement){
@@ -232,7 +242,8 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(PutStatement putStatement){
         //TODO:visit putStatement
-
+        //TODO:ask what is the possible errors?
+        putStatement.getExpression().accept(this);
         return new NoType();
 
     }
@@ -253,7 +264,20 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(ListValue listValue){
         // TODO:visit listValue
-        return null;
+        Type listType ;
+        if (listValue.getElements().isEmpty())
+            listType = new NoType();
+        else {
+            listType = listValue.getElements().getFirst().accept(this);
+            for (int i = 1 ; i < listValue.getElements().size() ; i++){
+                if (!listType.sameType(listValue.getElements().get(i).accept(this))) {
+                    typeErrors.add(new ListElementsTypesMisMatch(listValue.getLine()));
+                    listType = new InvalidType();
+                }
+            }
+        }
+
+        return new ListType(listType);
     }
     @Override
     public Type visit(FunctionPointer functionPointer){
