@@ -310,7 +310,11 @@ public class TypeChecker extends Visitor<Type> {
     }
     @Override
     public Type visit(BinaryExpression binaryExpression){
-        //TODO:visit binary expression
+        //TODO:visit binary expression\
+        if (!binaryExpression.getFirstOperand().accept(this).sameType(
+                binaryExpression.getFirstOperand().accept(this)))
+            typeErrors.add(new NonSameOperands(binaryExpression.getLine(), binaryExpression.getOperator()));
+        
         return null;
     }
     @Override
