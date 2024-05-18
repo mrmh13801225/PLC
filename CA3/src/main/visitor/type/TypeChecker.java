@@ -50,13 +50,34 @@ public class TypeChecker extends Visitor<Type> {
         return null;
     }
 
-    ArrayList<ReturnStatement> findReturnStatements (ArrayList<Statement> statements){
+    private ArrayList<ReturnStatement> findReturnStatements (ArrayList<Statement> statements){
         ArrayList<ReturnStatement> returnStatements = new ArrayList<>();
         for (Statement statement : statements){
             if (statement instanceof  ReturnStatement returnStatement)
                 returnStatements.add(returnStatement);
-            else if (statement instanceof )
+            else if (statement instanceof ForStatement forStatement)
+                returnStatements.addAll(findReturnStatements(forStatement.getLoopBodyStmts()));
+            else if (statement instanceof IfStatement ifStatement) {
+                returnStatements.addAll(findReturnStatements(ifStatement.getThenBody()));
+                returnStatements.addAll(findReturnStatements(ifStatement.getElseBody()));
+            }
+            else if (statement instanceof LoopDoStatement loopDoStatement)
+                returnStatements.addAll(findReturnStatements(loopDoStatement.getLoopBodyStmts()));
         }
+        return returnStatements;
+    }
+
+    private boolean isReturnStatementsConsistant (ArrayList<ReturnStatement> returnStatements){
+
+        if(returnStatements.isEmpty())
+            return true;
+
+        Type returnType = returnStatements.getFirst().accept(this);
+        for (int i = 1 ; i < returnStatements.size() ; i++)
+            if (!returnType.sameType(returnStatements.get(i).accept(this)))
+                return false;
+
+        return true;
     }
 
     @Override
@@ -76,6 +97,9 @@ public class TypeChecker extends Visitor<Type> {
         }catch (ItemNotFound ignored){}
         for(Statement statement : functionDeclaration.getBody())
             statement.accept(this);
+        if (isReturnStatementsConsistant(findReturnStatements(functionDeclaration.getBody())))
+            typeErrors.add(new FunctionIncompatibleReturnTypes(functionDeclaration.getLine(),
+                    functionDeclaration.getFunctionName().getName()));
 
         //TODO:Figure out whether return types of functions are not the same.
         SymbolTable.pop();
@@ -193,16 +217,7 @@ public class TypeChecker extends Visitor<Type> {
             try {
                 SymbolTable.top.put(newVarItem);
                 newVarItem.setType(assignStatement.getAssignExpression().accept(this));
-            }catch (ItemAlreadyExists ignored){
-                try {
-                    VarItem variable = (VarItem) SymbolTable.top.getItem(newVarItem.getKey());
-                    if (!variable.getType().sameType(assignStatement.getAssignExpression().accept(this))){
-                        typeErrors.add(new UnsupportedOperandType(assignStatement.getAssignExpression().getLine(),
-                                assignStatement.getAssignOperator().toString()));
-                        return new NoType(); //TODO:mybe there was no need to this error.
-                    }
-                } catch (ItemNotFound ignored1) {}
-            }
+            }catch (ItemAlreadyExists ignored){}
         }
         return new NoType();
     }
