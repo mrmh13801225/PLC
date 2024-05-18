@@ -129,7 +129,7 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(ReturnStatement returnStatement){
         // TODO:Visit return statement.Note that return type of functions are specified here
-        return null;
+        return (returnStatement.hasRetExpression()) ? returnStatement.accept(this) : null;
     }
     @Override
     public Type visit(ExpressionStatement expressionStatement){
