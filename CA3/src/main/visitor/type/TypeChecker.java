@@ -182,6 +182,7 @@ public class TypeChecker extends Visitor<Type> {
             // TODO:maybe new type for a variable
             try {
                 SymbolTable.top.put(newVarItem);
+                newVarItem.setType(assignStatement.getAssignExpression().accept(this));
             }catch (ItemAlreadyExists ignored){
                 try {
                     VarItem variable = (VarItem) SymbolTable.top.getItem(newVarItem.getKey());
@@ -214,7 +215,18 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(PushStatement pushStatement){
         //TODO:visit push statement
-
+        Type initialType = pushStatement.getInitial().accept(this);
+        Type toBeAddedType = pushStatement.getToBeAdded().accept(this);
+        if (initialType instanceof StringType stringType){
+            if (!(toBeAddedType instanceof StringType))
+                typeErrors.add(new PushArgumentsTypesMisMatch(pushStatement.getLine()));
+        }
+        else if (initialType instanceof ListType listType){ //suppose emptyListType is NoType
+            if(!(listType.getType() instanceof NoType) && !listType.getType().equals(toBeAddedType))
+                typeErrors.add(new PushArgumentsTypesMisMatch(pushStatement.getLine()));
+        }
+        else
+            typeErrors.add(new PushArgumentsTypesMisMatch(pushStatement.getLine()));
         return new NoType();
     }
     @Override
