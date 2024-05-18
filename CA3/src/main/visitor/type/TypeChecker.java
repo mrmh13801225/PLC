@@ -20,6 +20,16 @@ import java.util.*;
 
 public class TypeChecker extends Visitor<Type> {
     public ArrayList<CompileError> typeErrors = new ArrayList<>();
+
+    private ArrayList<Type> visitStatements (ArrayList<Statement> statements){
+        ArrayList<Type> visitingResults = new ArrayList<>();
+
+        for (Statement statement : statements)
+            visitingResults.add(statement.accept(this));
+
+        return visitingResults;
+    }
+
     @Override
     public Type visit(Program program){
         SymbolTable.root = new SymbolTable();
@@ -91,6 +101,7 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(MainDeclaration mainDeclaration){
         //TODO:visit main
+        visitStatements(mainDeclaration.getBody());
         return null;
     }
     @Override
@@ -102,6 +113,12 @@ public class TypeChecker extends Visitor<Type> {
             Type accessedType = accessExpression.getAccessedExpression().accept(this);
             if(!(accessedType instanceof StringType) && !(accessedType instanceof ListType)){
                 typeErrors.add(new IsNotIndexable(accessExpression.getLine()));
+                return new NoType();
+            }
+            Type IndexType = accessExpression.getDimentionalAccess().getFirst().accept(this);
+            if (!(IndexType instanceof IntType)){
+                typeErrors.add(new AccessIndexIsNotInt(accessExpression.getDimentionalAccess().getFirst().
+                        getLine()));
                 return new NoType();
             }
             //TODO:index of access list must be int
