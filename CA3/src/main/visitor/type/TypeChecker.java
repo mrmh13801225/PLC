@@ -97,13 +97,14 @@ public class TypeChecker extends Visitor<Type> {
         }catch (ItemNotFound ignored){}
         for(Statement statement : functionDeclaration.getBody())
             statement.accept(this);
-        if (isReturnStatementsConsistant(findReturnStatements(functionDeclaration.getBody())))
+        ArrayList<ReturnStatement> returnStatements = findReturnStatements(functionDeclaration.getBody());
+        if (isReturnStatementsConsistant(returnStatements))
             typeErrors.add(new FunctionIncompatibleReturnTypes(functionDeclaration.getLine(),
                     functionDeclaration.getFunctionName().getName()));
 
         //TODO:Figure out whether return types of functions are not the same.
         SymbolTable.pop();
-        return null;
+        return returnStatements.getFirst().accept(this);
         //TODO:Return the infered type of the function
     }
     @Override
