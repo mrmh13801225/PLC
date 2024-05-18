@@ -101,7 +101,9 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(MainDeclaration mainDeclaration){
         //TODO:visit main
+        SymbolTable.push(SymbolTable.top.copy());
         visitStatements(mainDeclaration.getBody());
+        SymbolTable.pop();
         return null;
     }
     @Override
@@ -115,11 +117,11 @@ public class TypeChecker extends Visitor<Type> {
                 typeErrors.add(new IsNotIndexable(accessExpression.getLine()));
                 return new NoType();
             }
-            Type IndexType = accessExpression.getDimentionalAccess().getFirst().accept(this);
-            if (!(IndexType instanceof IntType)){
-                typeErrors.add(new AccessIndexIsNotInt(accessExpression.getDimentionalAccess().getFirst().
-                        getLine()));
-                return new NoType();
+            for (Expression expression : accessExpression.getDimentionalAccess()) {
+                if (!(expression.accept(this) instanceof IntType)) {
+                    typeErrors.add(new AccessIndexIsNotInt(expression.getLine()));
+                    return new NoType();
+                }
             }
             //TODO:index of access list must be int
         }
