@@ -312,7 +312,7 @@ public class TypeChecker extends Visitor<Type> {
     public Type visit(BinaryExpression binaryExpression){
         //TODO:visit binary expression\
         if (!binaryExpression.getFirstOperand().accept(this).sameType(
-                binaryExpression.getFirstOperand().accept(this)))
+                binaryExpression.getSecondOperand().accept(this)))
             typeErrors.add(new NonSameOperands(binaryExpression.getLine(), binaryExpression.getOperator()));
         
         return null;
@@ -343,7 +343,12 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(LenStatement lenStatement){
         //TODO:visit LenStatement.Be carefull about the return type of LenStatement.
-        return null;
+        Type type = lenStatement.getExpression().accept(this);
+        if (!((type instanceof StringType) || (type instanceof ListType))) {
+            typeErrors.add(new LenArgumentTypeMisMatch(lenStatement.getLine()));
+            return new InvalidType();
+        }
+        return new NoType();//TODO:may cause bugs
     }
     @Override
     public Type visit(MatchPatternStatement matchPatternStatement){
