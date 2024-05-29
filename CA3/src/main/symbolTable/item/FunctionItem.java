@@ -20,6 +20,8 @@ public class FunctionItem extends SymbolTableItem{
         this.argumentTypes = argumentTypes;
     }
 
+    public void resetArgs(){this.argumentTypes = new ArrayList<>();}
+
     public FunctionItem(FunctionDeclaration functionDeclaration){
         this.functionDeclaration = functionDeclaration;
         this.name = this.functionDeclaration.getFunctionName().getName();

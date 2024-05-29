@@ -1,3 +1,7 @@
+Line:15-> types of return expressions of the function `g` must be the same
+Line:16-> unsupported operand type for operator PLUS
+Line:16-> unsupported operand type for operator PLUS
+Line:16-> operands of operator PLUS must be the same
 Line:22-> access index must be integer
 Line:25-> types of begin and end of ranges can only be integer
 Line:31-> access index must be integer

@@ -32,6 +32,7 @@ public class FunctionDeclaration extends Declaration{
     public ArrayList<Statement> getBody(){return this.body;}
     public void setBody(ArrayList<Statement> body){this.body = body;}
     public void addStmt(Statement stmt){this.body.add(stmt);}
+
     @Override
     public String toString(){return "FunctionDeclaration:" + this.functionName.getName();}
     @Override

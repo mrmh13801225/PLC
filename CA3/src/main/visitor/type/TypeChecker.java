@@ -96,16 +96,14 @@ public class TypeChecker extends Visitor<Type> {
                     SymbolTable.top.put(argItem);
                 }catch (ItemAlreadyExists ignored){}
             }
-            System.out.println("inja");
+
         }catch (ItemNotFound ignored){}
-        for(Statement statement : functionDeclaration.getBody())
-            statement.accept(this);
-        ArrayList<ReturnStatement> returnStatements = findReturnStatements(functionDeclaration.getBody());
-        for (ReturnStatement rt : returnStatements) {
-            System.out.print(rt.toString());
-            System.out.print(", ");
+        ArrayList<Type> returnStatementsType = new ArrayList<>();
+        for(Statement statement : functionDeclaration.getBody()) {
+            if (statement instanceof ReturnStatement)
+                statement.accept(this).toString();
         }
-        System.out.println("]");
+
         if (isReturnStatementsConsistant(returnStatements))
             typeErrors.add(new FunctionIncompatibleReturnTypes(functionDeclaration.getLine(),
                     functionDeclaration.getFunctionName().getName()));
@@ -164,7 +162,21 @@ public class TypeChecker extends Visitor<Type> {
             if (accessExpression.getAccessedExpression() instanceof Identifier id){
                 try {
                     FunctionItem functionItem = (FunctionItem) SymbolTable.root.getItem("Function:" + id.getName());
-                    functionItem.getFunctionDeclaration().accept(this);
+                    FunctionDeclaration functionDeclaration = functionItem.getFunctionDeclaration();
+                    ArrayList<Type> args = new ArrayList<>();
+                    for (int i = 0 ; i < functionDeclaration.getArgs().size() ; i++){
+                        if (i < accessExpression.getArguments().size()){
+                            args.add(accessExpression.getArguments().get(i).accept(this));
+                        }
+                        else if (functionDeclaration.getArgs().get(i).getDefaultVal() != null){
+                            args.add(functionDeclaration.getArgs().get(i).getDefaultVal().accept(this));
+                        }
+                        else
+                            args.add(new NoType());
+                    }
+                    functionItem.setArgumentTypes(args);
+                    functionDeclaration.accept(this);
+                    functionItem.resetArgs();
                 } catch (ItemNotFound ignored) {}
             }
         }
@@ -188,7 +200,8 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(ReturnStatement returnStatement){
         // TODO:Visit return statement.Note that return type of functions are specified here
-        return (returnStatement.hasRetExpression()) ? returnStatement.accept(this) : new NoType();
+        return (returnStatement.hasRetExpression()) ? returnStatement.getReturnExp().accept(this) :
+                new NoType();
     }
     @Override
     public Type visit(ExpressionStatement expressionStatement){
