@@ -85,6 +85,7 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(FunctionDeclaration functionDeclaration){
         SymbolTable.push(new SymbolTable());
+        SymbolTable.pushReturns(new ArrayList<>());
         try {
             FunctionItem functionItem = (FunctionItem) SymbolTable.root.getItem(FunctionItem.START_KEY +
                     functionDeclaration.getFunctionName().getName());
@@ -98,19 +99,23 @@ public class TypeChecker extends Visitor<Type> {
             }
 
         }catch (ItemNotFound ignored){}
-        ArrayList<Type> returnStatementsType = new ArrayList<>();
         for(Statement statement : functionDeclaration.getBody()) {
-            if (statement instanceof ReturnStatement)
-                statement.accept(this).toString();
+            statement.accept(this);
         }
 
-        if (isReturnStatementsConsistant(returnStatements))
-            typeErrors.add(new FunctionIncompatibleReturnTypes(functionDeclaration.getLine(),
-                    functionDeclaration.getFunctionName().getName()));
 
         //TODO:Figure out whether return types of functions are not the same.
+        Type returnType ;
+        try {
+            returnType = SymbolTable.getReturnType();
+        } catch (IncosistanceReturn e) {
+            typeErrors.add(new FunctionIncompatibleReturnTypes(functionDeclaration.getLine(),
+                    functionDeclaration.getFunctionName().getName()));
+            returnType = new InvalidType();
+        }
+        SymbolTable.popReturns();
         SymbolTable.pop();
-        return returnStatements.getFirst().accept(this);
+        return returnType;
         //TODO:Return the infered type of the function
     }
     @Override
@@ -200,8 +205,10 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(ReturnStatement returnStatement){
         // TODO:Visit return statement.Note that return type of functions are specified here
-        return (returnStatement.hasRetExpression()) ? returnStatement.getReturnExp().accept(this) :
+        Type returnType = (returnStatement.hasRetExpression()) ? returnStatement.getReturnExp().accept(this) :
                 new NoType();
+        SymbolTable.putReturn(returnType);
+        return returnType;
     }
     @Override
     public Type visit(ExpressionStatement expressionStatement){
@@ -275,11 +282,18 @@ public class TypeChecker extends Visitor<Type> {
         }
         else{
             VarItem newVarItem = new VarItem(assignStatement.getAssignedId());
+            Type assignExpressionType = assignStatement.getAssignExpression().accept(this);
             // TODO:maybe new type for a variable
             try {
                 SymbolTable.top.put(newVarItem);
-                newVarItem.setType(assignStatement.getAssignExpression().accept(this));
-            }catch (ItemAlreadyExists ignored){}
+                newVarItem.setType(assignExpressionType);
+            }catch (ItemAlreadyExists e){
+                try {
+                    VarItem varItem = (VarItem)SymbolTable.top.getItem("VAR:" +
+                            assignStatement.getAssignedId().getName());
+                    varItem.setType(assignExpressionType);
+                } catch (ItemNotFound ignored) {}
+            }
         }
         return new NoType();
     }
