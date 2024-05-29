@@ -402,11 +402,43 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(RangeExpression rangeExpression){
         RangeType rangeType = rangeExpression.getRangeType();
+        Type type = new NoType();
 
         if(rangeType.equals(RangeType.LIST)){
+            if (rangeExpression.getRangeExpressions().isEmpty())
+                return new NoType();
+            Type firstElementType = rangeExpression.getRangeExpressions().getFirst().accept(this);
+            for (int i = 1 ; i < rangeExpression.getRangeExpressions().size() ; i++){
+                if (!firstElementType.sameType(rangeExpression.getRangeExpressions().get(i).accept(this))){
+                    typeErrors.add(new ListElementsTypesMisMatch(rangeExpression.getLine()));
+                    return new InvalidType();
+                }
+            }
+            type = firstElementType;
             // TODO --> mind that the lists are declared explicitly in the grammar in this node, so handle the errors
+        } else if (rangeType.equals(RangeType.DOUBLE_DOT)) {
+            if (!((rangeExpression.getRangeExpressions().getFirst().accept(this) instanceof IntType) &&
+                    (rangeExpression.getRangeExpressions().getLast().accept(this) instanceof IntType))){
+                typeErrors.add(new RangeValuesMisMatch(rangeExpression.getLine()));
+                return new InvalidType();
+            }
+            type = new IntType();
+        }
+        else {
+            Type id = rangeExpression.getRangeExpressions().getFirst().accept(this);
+            if (id instanceof ListType listType){
+                type = listType.getType();
+                if (listType.getType() instanceof InvalidType) {
+                    typeErrors.add(new RangeValuesMisMatch(rangeExpression.getLine()));
+                    return new InvalidType();
+                }
+            }
+            else{
+                typeErrors.add(new RangeValuesMisMatch(rangeExpression.getLine()));
+                return new InvalidType();
+            }
         }
 
-        return new NoType();
+        return type;
     }
 }
