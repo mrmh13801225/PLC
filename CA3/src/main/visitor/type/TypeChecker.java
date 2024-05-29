@@ -3,6 +3,7 @@ package main.visitor.type;
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.*;
 import main.ast.nodes.expression.*;
+import main.ast.nodes.expression.operators.UnaryOperator;
 import main.ast.nodes.expression.value.*;
 import main.ast.nodes.expression.value.primitive.*;
 import main.ast.nodes.statement.*;
@@ -336,6 +337,19 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(UnaryExpression unaryExpression){
         //TODO:visit unaryExpression
+        Type operandType = unaryExpression.getExpression().accept(this);
+        if (unaryExpression.getOperator() == UnaryOperator.NOT) {
+            if (!(operandType instanceof BoolType)) {
+                typeErrors.add(new UnsupportedOperandType(unaryExpression.getLine(), unaryExpression.getOperator().name()));
+                return new InvalidType();
+            }
+        }
+        else{
+            if (!((operandType instanceof FloatType) || (operandType instanceof IntType))){
+                typeErrors.add(new UnsupportedOperandType(unaryExpression.getLine(), unaryExpression.getOperator().name()));
+                return new InvalidType();
+            }
+        }
         return null;
     }
     @Override
