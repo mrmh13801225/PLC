@@ -160,7 +160,7 @@ public class TypeChecker extends Visitor<Type> {
         SymbolTable.pop();
         return null;
     }
-    private void visitFunction (FunctionItem functionItem, AccessExpression accessExpression){
+    private Type visitFunction (FunctionItem functionItem, AccessExpression accessExpression){
         FunctionDeclaration functionDeclaration = functionItem.getFunctionDeclaration();
         ArrayList<Type> args = new ArrayList<>();
         for (int i = 0 ; i < functionDeclaration.getArgs().size() ; i++){
@@ -174,24 +174,26 @@ public class TypeChecker extends Visitor<Type> {
                 args.add(new NoType());
         }
         functionItem.setArgumentTypes(args);
-        functionDeclaration.accept(this);
+        Type returnType = functionDeclaration.accept(this);
         functionItem.resetArgs();
+        return returnType;
     }
     @Override
     public Type visit(AccessExpression accessExpression){
+        Type returnType = new NoType();
         if(accessExpression.isFunctionCall()){
             //TODO:function is called here.set the arguments type and visit its declaration
             Type accessedType = accessExpression.getAccessedExpression().accept(this);
             if (accessExpression.getAccessedExpression() instanceof Identifier id){
                 try {
                     FunctionItem functionItem = (FunctionItem) SymbolTable.root.getItem("Function:" + id.getName());
-                    visitFunction(functionItem, accessExpression);
+                    returnType = visitFunction(functionItem, accessExpression);
                 } catch (ItemNotFound e) {
                     if (accessedType instanceof FptrType fptrType){
                         try {
                             FunctionItem functionItem = (FunctionItem) SymbolTable.root.getItem("Function:" +
                                     fptrType.getFunctionName());
-                            visitFunction(functionItem, accessExpression);
+                            returnType = visitFunction(functionItem, accessExpression);
                         } catch (ItemNotFound ignored) {}
                     }
                 }
@@ -199,19 +201,25 @@ public class TypeChecker extends Visitor<Type> {
         }
         else{
             Type accessedType = accessExpression.getAccessedExpression().accept(this);
-            if(!(accessedType instanceof StringType) && !(accessedType instanceof ListType)){
-                typeErrors.add(new IsNotIndexable(accessExpression.getLine()));
-                return new NoType();
-            }
             for (Expression expression : accessExpression.getDimentionalAccess()) {
                 if (!(expression.accept(this) instanceof IntType)) {
                     typeErrors.add(new AccessIndexIsNotInt(expression.getLine()));
-                    return new NoType();
                 }
+            }
+            if(!((accessedType instanceof ListType) || (accessedType instanceof StringType))){
+                typeErrors.add(new IsNotIndexable(accessExpression.getLine()));
+                return new NoType();
+            }
+            if ((accessedType instanceof ListType)) {
+                ListType listType = (ListType) accessedType;
+                returnType = listType.getType();
+            }
+            else if ((accessedType instanceof StringType)){
+                returnType = new StringType();
             }
             //TODO:index of access list must be int
         }
-        return new NoType();
+        return returnType;
     }
 
     @Override
@@ -336,11 +344,14 @@ public class TypeChecker extends Visitor<Type> {
                 typeErrors.add(new PushArgumentsTypesMisMatch(pushStatement.getLine()));
         }
         else if (initialType instanceof ListType listType){ //suppose emptyListType is NoType
-            if(!(listType.getType() instanceof NoType) && !listType.getType().equals(toBeAddedType))
+            if(!(listType.getType() instanceof NoType) && !listType.getType().equals(toBeAddedType)) {
                 typeErrors.add(new PushArgumentsTypesMisMatch(pushStatement.getLine()));
+            }
+            else if (listType.getType() instanceof NoType)
+                listType.setType(toBeAddedType);
         }
         else
-            typeErrors.add(new PushArgumentsTypesMisMatch(pushStatement.getLine()));
+            typeErrors.add(new IsNotPushedable(pushStatement.getLine()));
         return new NoType();
     }
     @Override
@@ -369,14 +380,18 @@ public class TypeChecker extends Visitor<Type> {
     public Type visit(ListValue listValue){
         // TODO:visit listValue
         Type listType ;
+        boolean errored = false;
         if (listValue.getElements().isEmpty())
             listType = new NoType();
         else {
             listType = listValue.getElements().getFirst().accept(this);
             for (int i = 1 ; i < listValue.getElements().size() ; i++){
                 if (!listType.sameType(listValue.getElements().get(i).accept(this))) {
-                    typeErrors.add(new ListElementsTypesMisMatch(listValue.getLine()));
-                    listType = new InvalidType();
+                    if (!errored) {
+                        typeErrors.add(new ListElementsTypesMisMatch(listValue.getLine()));
+                        listType = new InvalidType();
+                        errored = true;
+                    }
                 }
             }
         }
@@ -469,7 +484,7 @@ public class TypeChecker extends Visitor<Type> {
             typeErrors.add(new LenArgumentTypeMisMatch(lenStatement.getLine()));
             return new InvalidType();
         }
-        return new NoType();//TODO:may cause bugs
+        return new IntType();//TODO:may cause bugs
     }
     @Override
     public Type visit(MatchPatternStatement matchPatternStatement){
@@ -511,12 +526,12 @@ public class TypeChecker extends Visitor<Type> {
             if (id instanceof ListType listType){
                 type = listType.getType();
                 if (listType.getType() instanceof InvalidType) {
-                    typeErrors.add(new RangeValuesMisMatch(rangeExpression.getLine()));
+                    typeErrors.add(new IsNotIterable(rangeExpression.getLine()));
                     return new InvalidType();
                 }
             }
             else{
-                typeErrors.add(new RangeValuesMisMatch(rangeExpression.getLine()));
+                typeErrors.add(new IsNotIterable(rangeExpression.getLine()));
                 return new InvalidType();
             }
         }
