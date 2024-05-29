@@ -122,7 +122,16 @@ public class TypeChecker extends Visitor<Type> {
                 if(!(expression.accept(this) instanceof BoolType)){
                     typeErrors.add(new ConditionIsNotBool(expression.getLine()));
                     SymbolTable.pop();
-                    return new NoType();
+                    return new InvalidType();
+                }
+            }
+            Type returnType = patternDeclaration.getReturnExp().getFirst().accept(this);
+            for (int i = 1 ; i < patternDeclaration.getReturnExp().size() ; i++){
+                Type temp = patternDeclaration.getReturnExp().get(i).accept(this);
+                if (!returnType.sameType(temp)) {
+                    typeErrors.add(new PatternIncompatibleReturnTypes(patternDeclaration.getLine(),
+                            patternDeclaration.getPatternName().getName()));
+                    return new InvalidType();
                 }
             }
         //TODO:1-figure out whether return expression of different cases in pattern are of the same type/2-return the infered type
