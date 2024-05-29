@@ -238,8 +238,9 @@ public class TypeChecker extends Visitor<Type> {
     @Override
     public Type visit(ForStatement forStatement){
         SymbolTable.push(SymbolTable.top.copy());
-        forStatement.getRangeExpression().accept(this);
+        Type rangeType = forStatement.getRangeExpression().accept(this);
         VarItem varItem = new VarItem(forStatement.getIteratorId());
+        varItem.setType(rangeType);
         try{
             SymbolTable.top.put(varItem);
         }catch (ItemAlreadyExists ignored){}
