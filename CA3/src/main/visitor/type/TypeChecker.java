@@ -160,29 +160,41 @@ public class TypeChecker extends Visitor<Type> {
         SymbolTable.pop();
         return null;
     }
+    private void visitFunction (FunctionItem functionItem, AccessExpression accessExpression){
+        FunctionDeclaration functionDeclaration = functionItem.getFunctionDeclaration();
+        ArrayList<Type> args = new ArrayList<>();
+        for (int i = 0 ; i < functionDeclaration.getArgs().size() ; i++){
+            if (i < accessExpression.getArguments().size()){
+                args.add(accessExpression.getArguments().get(i).accept(this));
+            }
+            else if (functionDeclaration.getArgs().get(i).getDefaultVal() != null){
+                args.add(functionDeclaration.getArgs().get(i).getDefaultVal().accept(this));
+            }
+            else
+                args.add(new NoType());
+        }
+        functionItem.setArgumentTypes(args);
+        functionDeclaration.accept(this);
+        functionItem.resetArgs();
+    }
     @Override
     public Type visit(AccessExpression accessExpression){
         if(accessExpression.isFunctionCall()){
             //TODO:function is called here.set the arguments type and visit its declaration
+            Type accessedType = accessExpression.getAccessedExpression().accept(this);
             if (accessExpression.getAccessedExpression() instanceof Identifier id){
                 try {
                     FunctionItem functionItem = (FunctionItem) SymbolTable.root.getItem("Function:" + id.getName());
-                    FunctionDeclaration functionDeclaration = functionItem.getFunctionDeclaration();
-                    ArrayList<Type> args = new ArrayList<>();
-                    for (int i = 0 ; i < functionDeclaration.getArgs().size() ; i++){
-                        if (i < accessExpression.getArguments().size()){
-                            args.add(accessExpression.getArguments().get(i).accept(this));
-                        }
-                        else if (functionDeclaration.getArgs().get(i).getDefaultVal() != null){
-                            args.add(functionDeclaration.getArgs().get(i).getDefaultVal().accept(this));
-                        }
-                        else
-                            args.add(new NoType());
+                    visitFunction(functionItem, accessExpression);
+                } catch (ItemNotFound e) {
+                    if (accessedType instanceof FptrType fptrType){
+                        try {
+                            FunctionItem functionItem = (FunctionItem) SymbolTable.root.getItem("Function:" +
+                                    fptrType.getFunctionName());
+                            visitFunction(functionItem, accessExpression);
+                        } catch (ItemNotFound ignored) {}
                     }
-                    functionItem.setArgumentTypes(args);
-                    functionDeclaration.accept(this);
-                    functionItem.resetArgs();
-                } catch (ItemNotFound ignored) {}
+                }
             }
         }
         else{
@@ -294,6 +306,7 @@ public class TypeChecker extends Visitor<Type> {
                     varItem.setType(assignExpressionType);
                 } catch (ItemNotFound ignored) {}
             }
+
         }
         return new NoType();
     }
@@ -405,7 +418,7 @@ public class TypeChecker extends Visitor<Type> {
             typeErrors.add(new UnsupportedOperandType(binaryExpression.getLine(), binaryExpression.getOperator().name()));
             return new InvalidType();
         }
-        
+
         return findBinaryExpressionType(binaryExpression.getOperator(), firstOperandType);
     }
     @Override
