@@ -6,6 +6,12 @@ import main.visitor.IVisitor;
 
 
 public class AssignStatement extends Statement{
+    // a[2] = f[3];
+    // accessList = true;
+    // assignedId = new Id(a);
+    // assignExpression = func(1);
+    // assignOperator = EQUAL;
+    // accessListExpression = 2
     private boolean accessList;
     private Identifier assignedId;
     private Expression assignExpression;

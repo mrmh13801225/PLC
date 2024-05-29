@@ -221,6 +221,31 @@ public class TypeChecker extends Visitor<Type> {
     public Type visit(AssignStatement assignStatement) {
         if(assignStatement.isAccessList()){
             // TODO:assignment to list
+            Type id = assignStatement.getAssignedId().accept(this);
+            if (id instanceof InvalidType){
+                typeErrors.add(new IsNotIndexable(assignStatement.getLine()));
+                return new InvalidType();
+            }
+            else if(id instanceof ListType listType){
+                if (!listType.getType().sameType(assignStatement.getAssignExpression().accept(this))){
+                    typeErrors.add(new ListElementsTypesMisMatch(assignStatement.getLine()));
+                    return new InvalidType();
+                }
+            }
+            else if(id instanceof StringType string){
+                if(!string.sameType(assignStatement.getAssignExpression().accept(this))){
+                    typeErrors.add(new ListElementsTypesMisMatch(assignStatement.getLine()));
+                    return new InvalidType();
+                }
+            }
+            else {
+                typeErrors.add(new IsNotIndexable(assignStatement.getLine()));
+                return new InvalidType();
+            }
+            if (!(assignStatement.getAccessListExpression().accept(this) instanceof IntType)){
+                typeErrors.add(new AccessIndexIsNotInt(assignStatement.getLine()));
+                return new InvalidType();
+            }
         }
         else{
             VarItem newVarItem = new VarItem(assignStatement.getAssignedId());
@@ -371,13 +396,8 @@ public class TypeChecker extends Visitor<Type> {
         try {
             VarItem varItem = (VarItem)SymbolTable.top.getItem("VAR:" + identifier.getName());
             return varItem.getType();
-        } catch (ItemNotFound e) {
-            VarItem newId = new VarItem(identifier);
-            try {
-                SymbolTable.top.put(newId);
-            } catch (ItemAlreadyExists ignored) {}
-        }
-        return new NoType();
+        } catch (ItemNotFound ignored) {}
+        return new InvalidType();
     }
     @Override
     public Type visit(LenStatement lenStatement){
