@@ -96,10 +96,16 @@ public class TypeChecker extends Visitor<Type> {
                     SymbolTable.top.put(argItem);
                 }catch (ItemAlreadyExists ignored){}
             }
+            System.out.println("inja");
         }catch (ItemNotFound ignored){}
         for(Statement statement : functionDeclaration.getBody())
             statement.accept(this);
         ArrayList<ReturnStatement> returnStatements = findReturnStatements(functionDeclaration.getBody());
+        for (ReturnStatement rt : returnStatements) {
+            System.out.print(rt.toString());
+            System.out.print(", ");
+        }
+        System.out.println("]");
         if (isReturnStatementsConsistant(returnStatements))
             typeErrors.add(new FunctionIncompatibleReturnTypes(functionDeclaration.getLine(),
                     functionDeclaration.getFunctionName().getName()));
@@ -155,6 +161,12 @@ public class TypeChecker extends Visitor<Type> {
     public Type visit(AccessExpression accessExpression){
         if(accessExpression.isFunctionCall()){
             //TODO:function is called here.set the arguments type and visit its declaration
+            if (accessExpression.getAccessedExpression() instanceof Identifier id){
+                try {
+                    FunctionItem functionItem = (FunctionItem) SymbolTable.root.getItem("Function:" + id.getName());
+                    functionItem.getFunctionDeclaration().accept(this);
+                } catch (ItemNotFound ignored) {}
+            }
         }
         else{
             Type accessedType = accessExpression.getAccessedExpression().accept(this);
