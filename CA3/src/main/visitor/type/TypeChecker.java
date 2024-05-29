@@ -3,6 +3,7 @@ package main.visitor.type;
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.*;
 import main.ast.nodes.expression.*;
+import main.ast.nodes.expression.operators.BinaryOperator;
 import main.ast.nodes.expression.operators.UnaryOperator;
 import main.ast.nodes.expression.value.*;
 import main.ast.nodes.expression.value.primitive.*;
@@ -169,7 +170,7 @@ public class TypeChecker extends Visitor<Type> {
             }
             //TODO:index of access list must be int
         }
-        return null;
+        return new NoType();
     }
 
     @Override
@@ -263,7 +264,7 @@ public class TypeChecker extends Visitor<Type> {
             if(!((expression.accept(this)) instanceof BoolType))
                 typeErrors.add(new ConditionIsNotBool(expression.getLine()));
 
-        return null;
+        return new NoType();
     }
     @Override
     public Type visit(NextStatement nextStatement){
@@ -271,7 +272,7 @@ public class TypeChecker extends Visitor<Type> {
             if(!((expression.accept(this)) instanceof BoolType))
                 typeErrors.add(new ConditionIsNotBool(expression.getLine()));
 
-        return null;
+        return new NoType();
     }
     @Override
     public Type visit(PushStatement pushStatement){
@@ -344,11 +345,20 @@ public class TypeChecker extends Visitor<Type> {
         return appendeeType;
     }
 
+    private Type findBinaryExpressionType (BinaryOperator binaryOperator, Type elementType){
+        if (binaryOperator.equals(BinaryOperator.DIVIDE) || binaryOperator.equals(BinaryOperator.MINUS) ||
+        binaryOperator.equals(BinaryOperator.MULT) || binaryOperator.equals(BinaryOperator.PLUS))
+            return elementType;
+        else
+            return new BoolType();
+    }
+
     @Override
     public Type visit(BinaryExpression binaryExpression){
         //TODO:visit binary expression\
         Type firstOperandType = binaryExpression.getFirstOperand().accept(this);
-        if (!firstOperandType.sameType(binaryExpression.getSecondOperand().accept(this))){
+        Type secondOperandType = binaryExpression.getSecondOperand().accept(this);
+        if (!firstOperandType.sameType(secondOperandType)){
             typeErrors.add(new NonSameOperands(binaryExpression.getLine(), binaryExpression.getOperator()));
             return new InvalidType();
         }
@@ -357,7 +367,7 @@ public class TypeChecker extends Visitor<Type> {
             return new InvalidType();
         }
         
-        return firstOperandType;
+        return findBinaryExpressionType(binaryExpression.getOperator(), firstOperandType);
     }
     @Override
     public Type visit(UnaryExpression unaryExpression){
@@ -375,7 +385,7 @@ public class TypeChecker extends Visitor<Type> {
                 return new InvalidType();
             }
         }
-        return null;
+        return operandType;
     }
     @Override
     public Type visit(ChompStatement chompStatement){

@@ -1,0 +1,3 @@
+Line:22-> access index must be integer
+Line:25-> types of begin and end of ranges can only be integer
+Line:31-> access index must be integer
