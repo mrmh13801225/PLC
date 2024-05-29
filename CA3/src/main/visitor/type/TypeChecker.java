@@ -317,14 +317,21 @@ public class TypeChecker extends Visitor<Type> {
         }
         return appendeeType;
     }
+
     @Override
     public Type visit(BinaryExpression binaryExpression){
         //TODO:visit binary expression\
-        if (!binaryExpression.getFirstOperand().accept(this).sameType(
-                binaryExpression.getSecondOperand().accept(this)))
+        Type firstOperandType = binaryExpression.getFirstOperand().accept(this);
+        if (!firstOperandType.sameType(binaryExpression.getSecondOperand().accept(this))){
             typeErrors.add(new NonSameOperands(binaryExpression.getLine(), binaryExpression.getOperator()));
+            return new InvalidType();
+        }
+        else if (!((firstOperandType instanceof FloatType) || (firstOperandType instanceof IntType))){
+            typeErrors.add(new UnsupportedOperandType(binaryExpression.getLine(), binaryExpression.getOperator().name()));
+            return new InvalidType();
+        }
         
-        return null;
+        return firstOperandType;
     }
     @Override
     public Type visit(UnaryExpression unaryExpression){
