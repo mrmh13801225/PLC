@@ -4,6 +4,7 @@ import main.ast.nodes.Program;
 import main.ast.nodes.declaration.FunctionDeclaration;
 import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.expression.*;
+import main.ast.nodes.expression.operators.BinaryOperator;
 import main.ast.nodes.expression.value.FunctionPointer;
 import main.ast.nodes.expression.value.ListValue;
 import main.ast.nodes.expression.value.primitive.BoolValue;
@@ -207,8 +208,15 @@ public class CodeGenerator extends Visitor<String> {
     }
     @Override
     public String visit(AssignStatement assignStatement){
+        ArrayList<String> commands = new ArrayList<>();
+        if (assignStatement.isAccessList()){
+
+        }
+        else {
+
+        }
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(IfStatement ifStatement){
@@ -278,10 +286,47 @@ public class CodeGenerator extends Visitor<String> {
     public String visit(ExpressionStatement expressionStatement){
         return expressionStatement.getExpression().accept(this);
     }
+    private ArrayList<String> getBinaryOperatorCommands(BinaryOperator binaryOperator){
+        ArrayList<String> commands = new ArrayList<>();
+        if (binaryOperator == BinaryOperator.PLUS)
+            commands.add("iadd") ;
+        else if (binaryOperator == BinaryOperator.MULT)
+            commands.add("imul");
+        else if(binaryOperator == BinaryOperator.DIVIDE)
+            commands.add("idiv");
+        else if(binaryOperator == BinaryOperator.MINUS)
+            commands.add("isub");
+        else {
+            String trueLabel = getFreshLabel();
+            String exitLabel = getFreshLabel();
+            if (binaryOperator == BinaryOperator.EQUAL)
+                commands.add("if_icmpeq " + trueLabel);
+            else if(binaryOperator == BinaryOperator.GREATER_EQUAL_THAN)
+                commands.add("if_icmpge " + trueLabel);
+            else if(binaryOperator == BinaryOperator.GREATER_THAN)
+                commands.add("if_icmpgt " + trueLabel);
+            else if(binaryOperator == BinaryOperator.LESS_EQUAL_THAN)
+                commands.add("if_icmple " + trueLabel);
+            else if(binaryOperator == BinaryOperator.LESS_THAN)
+                commands.add("if_icmplt " + trueLabel);
+            else if(binaryOperator == BinaryOperator.NOT_EQUAL)
+                commands.add("if_icmpne" + trueLabel);
+            commands.add("ldc 0");
+            commands.add("goto " + exitLabel);
+            commands.add(trueLabel + ":");
+            commands.add("ldc 1");
+            commands.add(exitLabel + ":");
+        }
+        return commands;
+    }
     @Override
     public String visit(BinaryExpression binaryExpression){
+        ArrayList<String> commands = new ArrayList<>();
+        commands.add(binaryExpression.getFirstOperand().accept(this));
+        commands.add(binaryExpression.getSecondOperand().accept(this));
+        commands.addAll(getBinaryOperatorCommands(binaryExpression.getOperator()));
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(UnaryExpression unaryExpression){
