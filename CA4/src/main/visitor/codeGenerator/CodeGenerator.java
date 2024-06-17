@@ -233,10 +233,29 @@ public class CodeGenerator extends Visitor<String> {
         commands.add(exitL + ":");
         return String.join("\n",commands);
     }
+    private String getPrintValue(Expression expression, Type type){
+        if (type instanceof StringType)
+            return "ldc \"" + expression.accept(this) + "\"";
+        else
+            return "ldc " + expression.accept(this);
+    }
+    private String getPrintInvoker(Type type){
+        if (type instanceof StringType)
+            return "invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V ;";
+        else if (type instanceof IntType)
+            return "invokevirtual java/io/PrintStream/println(I)V ;";
+        else
+            return "invokevirtual java/io/PrintStream/println(Z)V ;";
+    }
     @Override
     public String visit(PutStatement putStatement){
+        ArrayList<String> commands = new ArrayList<>();
+        Type printType = putStatement.getExpression().accept(typeChecker);
+        commands.add("getstatic java/lang/System/out Ljava/io/PrintStream;");
+        commands.add(getPrintValue(putStatement.getExpression(), printType));
+        commands.add(getPrintInvoker(printType));
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(ReturnStatement returnStatement){
