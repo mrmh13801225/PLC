@@ -330,8 +330,28 @@ public class CodeGenerator extends Visitor<String> {
     }
     @Override
     public String visit(UnaryExpression unaryExpression){
+        ArrayList<String> commands = new ArrayList<>();
+        commands.add(unaryExpression.getExpression().accept(this));
+        switch (unaryExpression.getOperator()){
+            case INC -> {
+                commands.add("ldc 1");
+                commands.add("iadd");
+            }
+            case DEC -> {
+                commands.add("idc -1");
+                commands.add("iadd");
+            }
+            case MINUS -> {
+                commands.add("idc -1");
+                commands.add("imul");
+            }
+            case NOT -> {
+                commands.add("ldc 1");
+                commands.add("ixor");
+            }
+        }
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(Identifier identifier){
