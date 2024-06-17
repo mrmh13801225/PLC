@@ -23,6 +23,7 @@ import main.visitor.Visitor;
 import main.visitor.type.TypeChecker;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -210,7 +211,25 @@ public class CodeGenerator extends Visitor<String> {
     @Override
     public String visit(IfStatement ifStatement){
         //TODO
-        return null;
+        ArrayList<String> commands = new ArrayList<>();
+        commands.add(ifStatement.getConditions().getFirst().accept(this));
+
+        String thenL = getFreshLabel();
+        String elseL = getFreshLabel();
+        String exitL = getFreshLabel();
+
+        commands.add("ifeq" + " " + elseL);
+        commands.add(thenL + ":");
+        for (Statement statement : ifStatement.getThenBody())
+            commands.add(statement.accept(this));
+
+        commands.add("goto " + exitL);
+        commands.add(elseL + ":");
+        for (Statement statement : ifStatement.getElseBody())
+            commands.add(statement.accept(this));
+
+        commands.add(exitL + ":");
+        return String.join("\n",commands);
     }
     @Override
     public String visit(PutStatement putStatement){
@@ -297,7 +316,9 @@ public class CodeGenerator extends Visitor<String> {
         commands.append("invokespecial java/util/ArrayList/<init>()V\n");
 
         for (Expression expression : listValue.getElements()){
-            commands.append(expression.accept(this)).append(invoker);
+            commands.append(expression.accept(this));
+            commands.append("dup\n");
+            commands.append(invoker);
             commands.append("invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z\n");
             commands.append("pop\n");
         }
