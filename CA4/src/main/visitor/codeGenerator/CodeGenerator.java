@@ -35,6 +35,8 @@ public class CodeGenerator extends Visitor<String> {
     private FunctionItem curFunction;
     private final HashMap<String, Integer> slots = new HashMap<>();
     private int curLabel = 0;
+    private String breakLabel = null;
+    private String continueLabel = null;
 
     public CodeGenerator(TypeChecker typeChecker){
         this.typeChecker = typeChecker;
@@ -212,13 +214,13 @@ public class CodeGenerator extends Visitor<String> {
     public String visit(IfStatement ifStatement){
         //TODO
         ArrayList<String> commands = new ArrayList<>();
-        commands.add(ifStatement.getConditions().getFirst().accept(this));
+        commands.add(ifStatement.getConditions().getFirst().accept(this)); //TODO : conditions must handled in different way
 
         String thenL = getFreshLabel();
         String elseL = getFreshLabel();
         String exitL = getFreshLabel();
 
-        commands.add("ifeq" + " " + elseL);
+        commands.add("ifeq " + elseL);
         commands.add(thenL + ":");
         for (Statement statement : ifStatement.getThenBody())
             commands.add(statement.accept(this));
@@ -278,18 +280,32 @@ public class CodeGenerator extends Visitor<String> {
         ArrayList<String> commands = new ArrayList<>();
         String loop_start = getFreshLabel();
         String after_loop = getFreshLabel();
+        breakLabel = after_loop;
+        continueLabel = loop_start;
+
         commands.add(loop_start + ":");
         for (Statement statement : loopDoStatement.getLoopBodyStmts())
             commands.add(statement.accept(this));
         commands.add(after_loop + ":");
 
+        breakLabel = null;
+        continueLabel = null;
         //TODO
         return String.join("\n",commands);
     }
     @Override
     public String visit(BreakStatement breakStatement){
+
+        ArrayList<String> commands = new ArrayList<>();
+        if (breakLabel != null){
+            if (!breakStatement.getConditions().isEmpty()){
+                 //TODO: correct the condition checking logic
+                commands.add(breakStatement.getConditions().getFirst().accept(this));
+                commands.add("ifne " + breakLabel);
+            }
+        }
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(NextStatement nextStatement){
