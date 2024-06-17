@@ -277,24 +277,48 @@ public class CodeGenerator extends Visitor<String> {
         commands += "invokespecial Fptr/<init>(Ljava/lang/Object;Ljava/lang/String;)V\n";
         return commands;
     }
+
+    private String findInvoker (ListType listType){
+        if (listType.getType() instanceof IntType)
+            return "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;\n";
+        else if (listType.getType() instanceof BoolType)
+            return "invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;\n";
+        else
+            return "";
+    }
     @Override
     public String visit(ListValue listValue){
-        //TODO
-        return null;
+        StringBuilder commands = new StringBuilder();
+        ListType listType = (ListType) listValue.accept(typeChecker);
+        String invoker = findInvoker(listType);
+
+        commands.append("new java/util/ArrayList\n");
+        commands.append("dup\n");
+        commands.append("invokespecial java/util/ArrayList/<init>()V\n");
+
+        for (Expression expression : listValue.getElements()){
+            commands.append(expression.accept(this)).append(invoker);
+            commands.append("invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z\n");
+            commands.append("pop\n");
+        }
+
+        return commands.toString();
     }
+
     @Override
     public String visit(IntValue intValue){
         //TODO, use "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer" to convert to primitive
-        return null;
+        return "ldc " + intValue.getIntVal(); // choosed not to convert it to Integer hear.
     }
     @Override
     public String visit(BoolValue boolValue){
+        int boolVal = boolValue.getBool() ? 1 : 0 ;
         //TODO, use "invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean" to convert to primitive
-        return null;
+        return "ldc " + boolVal;
     }
     @Override
     public String visit(StringValue stringValue){
         //TODO
-        return null;
+        return "ldc \"" + stringValue.getStr() + "\"";
     }
 }
