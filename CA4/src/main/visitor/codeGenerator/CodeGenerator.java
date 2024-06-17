@@ -238,8 +238,20 @@ public class CodeGenerator extends Visitor<String> {
     }
     @Override
     public String visit(ReturnStatement returnStatement){
+        ArrayList<String> commands = new ArrayList<>();
+
+        if (!returnStatement.hasRetExpression())
+            commands.add("return");
+        else {
+            commands.add(returnStatement.getReturnExp().accept(this));
+            Type returnType = returnStatement.getReturnExp().accept(typeChecker);
+            String returnCommand = (returnType instanceof IntType || returnType instanceof BoolType) ? "ireturn" :
+                    "areturn";
+            commands.add(returnCommand);
+        }
+
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(ExpressionStatement expressionStatement){
