@@ -274,8 +274,17 @@ public class CodeGenerator extends Visitor<String> {
     }
     @Override
     public String visit(LoopDoStatement loopDoStatement){
+
+        ArrayList<String> commands = new ArrayList<>();
+        String loop_start = getFreshLabel();
+        String after_loop = getFreshLabel();
+        commands.add(loop_start + ":");
+        for (Statement statement : loopDoStatement.getLoopBodyStmts())
+            commands.add(statement.accept(this));
+        commands.add(after_loop + ":");
+
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(BreakStatement breakStatement){
