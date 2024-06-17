@@ -309,8 +309,16 @@ public class CodeGenerator extends Visitor<String> {
     }
     @Override
     public String visit(NextStatement nextStatement){
+        ArrayList<String> commands = new ArrayList<>();
+        if (continueLabel != null){
+            if (!nextStatement.getConditions().isEmpty()){
+                //TODO: correct the condition checking logic
+                commands.add(nextStatement.getConditions().getFirst().accept(this));
+                commands.add("ifne " + continueLabel);
+            }
+        }
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(LenStatement lenStatement){
