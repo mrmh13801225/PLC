@@ -370,8 +370,12 @@ public class CodeGenerator extends Visitor<String> {
     }
     @Override
     public String visit(Identifier identifier){
-        //TODO
-        return null;
+        ArrayList commands = new ArrayList<>();
+        String idName = identifier.getName();
+        int index = slotOf(idName);
+
+        commands.add("aload " + index);
+        return String.join("\n",commands);
     }
     @Override
     public String visit(LoopDoStatement loopDoStatement){
@@ -436,15 +440,6 @@ public class CodeGenerator extends Visitor<String> {
         //TODO
         return String.join("\n",commands);
     }
-    /*
-    aload reference
-    ldc 0
-    aload reference
-    invokevirtual java/lang/String/length()I
-    ldc 2
-    isub
-    invokevirtual java/lang/String/substring(II)Ljava/lang/String;
-     */
     @Override
     public String visit(ChopStatement chopStatement){
         ArrayList<String> commands = new ArrayList<>();
