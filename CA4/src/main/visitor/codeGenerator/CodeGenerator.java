@@ -407,12 +407,22 @@ public class CodeGenerator extends Visitor<String> {
         String idName = identifier.getName();
         int index = slotOf(idName);
         String loader ;
-        if (this.idType instanceof IntType || this.idType instanceof BoolType)
-            loader = "iload ";
-        else
-            loader = "aload ";
+        String delimiter ;
+        if (this.idType instanceof ListType listType){
+            if (listType.getType() instanceof IntType || listType.getType() instanceof BoolType)
+                loader = "iaload";
+            else
+                loader = "aaload";
+        }
+        else {
+            delimiter = index < 4 ? "_" : " " ;
+            if (this.idType instanceof IntType || this.idType instanceof BoolType)
+                loader = "iload" + delimiter + index;
+            else
+                loader = "aload" + delimiter + index;
+        }
 
-        commands.add(loader + index);
+        commands.add(loader);
         return String.join("\n",commands);
     }
     @Override
