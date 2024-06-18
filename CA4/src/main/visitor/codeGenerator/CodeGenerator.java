@@ -3,6 +3,7 @@ package main.visitor.codeGenerator;
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.FunctionDeclaration;
 import main.ast.nodes.declaration.MainDeclaration;
+import main.ast.nodes.declaration.VarDeclaration;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.expression.operators.BinaryOperator;
 import main.ast.nodes.expression.value.FunctionPointer;
@@ -20,6 +21,7 @@ import main.ast.type.primitiveType.StringType;
 import main.symbolTable.SymbolTable;
 import main.symbolTable.exceptions.ItemNotFound;
 import main.symbolTable.item.FunctionItem;
+import main.symbolTable.item.VarItem;
 import main.visitor.Visitor;
 import main.visitor.type.TypeChecker;
 
@@ -161,16 +163,30 @@ public class CodeGenerator extends Visitor<String> {
         program.getMain().accept(this);
         return null;
     }
+
+    private String getInputTypes(FunctionDeclaration functionDeclaration){
+        String types = "(";
+        for (VarDeclaration varDeclaration : functionDeclaration.getArgs())
+            types += getType(varDeclaration.accept(typeChecker));
+        types += ")";
+        return types;
+    }
+
     @Override
     public String visit(FunctionDeclaration functionDeclaration){
         slots.clear();
 
         String commands = "";
-        String args = ""; // TODO and add to the slots
-        String returnType = ""; // TODO
+        String args = getInputTypes(functionDeclaration); // TODO and add to the slots
+        String returnType = getType(functionDeclaration.accept(typeChecker)); // TODO
         commands += ".method public " + functionDeclaration.getFunctionName().getName();
         commands += args + returnType + "\n";
         // TODO headers, body and return with corresponding type
+        commands += ".limit stack 128\n" ;
+        commands += ".limit locals 128\n" ;
+        for (Statement statement : functionDeclaration.getBody())
+            commands += statement.accept(this);
+        commands += ".end method\n";
 
         addCommand(commands);
         return null;
@@ -421,6 +437,7 @@ public class CodeGenerator extends Visitor<String> {
         //TODO
         return null;
     }
+
     @Override
     public String visit(FunctionPointer functionPointer){
         FptrType fptr = (FptrType) functionPointer.accept(typeChecker);
