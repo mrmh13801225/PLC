@@ -171,7 +171,6 @@ public class CodeGenerator extends Visitor<String> {
         types += ")";
         return types;
     }
-
     @Override
     public String visit(FunctionDeclaration functionDeclaration){
         slots.clear();
@@ -378,15 +377,16 @@ public class CodeGenerator extends Visitor<String> {
     public String visit(LoopDoStatement loopDoStatement){
 
         ArrayList<String> commands = new ArrayList<>();
-        String loop_start = getFreshLabel();
-        String after_loop = getFreshLabel();
-        breakLabel = after_loop;
-        continueLabel = loop_start;
+        String loopStart = getFreshLabel();
+        String afterLoop = getFreshLabel();
+        breakLabel = afterLoop;
+        continueLabel = loopStart;
 
-        commands.add(loop_start + ":");
+        commands.add(loopStart + ":");
         for (Statement statement : loopDoStatement.getLoopBodyStmts())
             commands.add(statement.accept(this));
-        commands.add(after_loop + ":");
+        commands.add("goto " + loopStart);
+        commands.add(afterLoop + ":");
 
         breakLabel = null;
         continueLabel = null;
@@ -403,6 +403,8 @@ public class CodeGenerator extends Visitor<String> {
                 commands.add(breakStatement.getConditions().getFirst().accept(this));
                 commands.add("ifne " + breakLabel);
             }
+            else
+                commands.add("goto " + breakLabel);
         }
         //TODO
         return String.join("\n",commands);
@@ -416,6 +418,8 @@ public class CodeGenerator extends Visitor<String> {
                 commands.add(nextStatement.getConditions().getFirst().accept(this));
                 commands.add("ifne " + continueLabel);
             }
+            else
+                commands.add("goto " + continueLabel);
         }
         //TODO
         return String.join("\n",commands);
@@ -432,10 +436,28 @@ public class CodeGenerator extends Visitor<String> {
         //TODO
         return String.join("\n",commands);
     }
+    /*
+    aload reference
+    ldc 0
+    aload reference
+    invokevirtual java/lang/String/length()I
+    ldc 2
+    isub
+    invokevirtual java/lang/String/substring(II)Ljava/lang/String;
+     */
     @Override
     public String visit(ChopStatement chopStatement){
-        //TODO
-        return null;
+        ArrayList<String> commands = new ArrayList<>();
+        String reference = chopStatement.getChopExpression().accept(this);
+        commands.add(reference);
+        commands.add("ldc 0");
+        commands.add(reference);
+        commands.add("invokevirtual java/lang/String/length()I");
+        commands.add("ldc 2");
+        commands.add("isub");
+        commands.add("invokevirtual java/lang/String/substring(II)Ljava/lang/String;");
+        //commands.add("pop"); //TODO : maybe uncomment?
+        return String.join("\n",commands);
     }
 
     @Override
@@ -452,32 +474,32 @@ public class CodeGenerator extends Visitor<String> {
 
     private String findInvoker (ListType listType){
         if (listType.getType() instanceof IntType)
-            return "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;\n";
+            return "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;";
         else if (listType.getType() instanceof BoolType)
-            return "invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;\n";
+            return "invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;";
         else
             return null;
     }
     @Override
     public String visit(ListValue listValue){
-        StringBuilder commands = new StringBuilder();
+        ArrayList<String> commands = new ArrayList<>();
         ListType listType = (ListType) listValue.accept(typeChecker);
         String invoker = findInvoker(listType);
 
-        commands.append("new java/util/ArrayList\n");
-        commands.append("dup\n");
-        commands.append("invokespecial java/util/ArrayList/<init>()V\n");
+        commands.add("new java/util/ArrayList");
+        commands.add("dup");
+        commands.add("invokespecial java/util/ArrayList/<init>()V");
 
         for (Expression expression : listValue.getElements()){
-            commands.append(expression.accept(this));
-            //commands.append("dup\n");
+            commands.add(expression.accept(this));
+            commands.add("dup");
             if (invoker != null)
-                commands.append(invoker);
-            commands.append("invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z\n");
-            commands.append("pop\n");
+                commands.add(invoker);
+            commands.add("invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z");
+            commands.add("pop");
         }
 
-        return commands.toString();
+        return String.join("\n",commands);
     }
 
     @Override
