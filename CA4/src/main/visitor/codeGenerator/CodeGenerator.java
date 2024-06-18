@@ -40,6 +40,7 @@ public class CodeGenerator extends Visitor<String> {
     private int curLabel = 0;
     private String breakLabel = null;
     private String continueLabel = null;
+    private Type idType = null ;
 
     public CodeGenerator(TypeChecker typeChecker){
         this.typeChecker = typeChecker;
@@ -224,12 +225,35 @@ public class CodeGenerator extends Visitor<String> {
     @Override
     public String visit(AssignStatement assignStatement){
         ArrayList<String> commands = new ArrayList<>();
+        Type assignmentType = assignStatement.getAssignExpression().accept(typeChecker);
+        if (assignStatement.isAccessList())
+            this.idType = new ListType(assignmentType);
+        else
+            this.idType = assignmentType;
+        commands.add(assignStatement.getAssignedId().accept(this));
+        this.idType = null;
+        if (assignStatement.isAccessList())
+            commands.add(assignStatement.getAccessListExpression().accept(this));
+        else
+            commands.add("pop"); //we do not need id reference for non lists
+        commands.add(assignStatement.getAssignExpression().accept(this));
+        String storeCommand ;
+        int index = slotOf(assignStatement.getAssignedId().getName());
         if (assignStatement.isAccessList()){
-
+            if (assignmentType instanceof IntType || assignmentType instanceof BoolType)
+                storeCommand = "iastore";
+            else
+                storeCommand = "aastore";
         }
         else {
-
+            String delimiter = index < 4 ? "_" : " " ;
+            if (assignmentType instanceof IntType || assignmentType instanceof BoolType)
+                storeCommand = "istore" + delimiter + index;
+            else
+                storeCommand = "astore" + delimiter + index;
         }
+        commands.add(storeCommand);
+
         //TODO
         return String.join("\n",commands);
     }
@@ -274,8 +298,10 @@ public class CodeGenerator extends Visitor<String> {
     public String visit(PutStatement putStatement){
         ArrayList<String> commands = new ArrayList<>();
         Type printType = putStatement.getExpression().accept(typeChecker);
+        this.idType = printType;
         commands.add("getstatic java/lang/System/out Ljava/io/PrintStream;");
         commands.add(getPrintValue(putStatement.getExpression(), printType));
+        this.idType = null;
         commands.add(getPrintInvoker(printType));
         //TODO
         return String.join("\n",commands);
@@ -287,8 +313,10 @@ public class CodeGenerator extends Visitor<String> {
         if (!returnStatement.hasRetExpression())
             commands.add("return");
         else {
-            commands.add(returnStatement.getReturnExp().accept(this));
             Type returnType = returnStatement.getReturnExp().accept(typeChecker);
+            this.idType = returnType;
+            commands.add(returnStatement.getReturnExp().accept(this));
+            this.idType = null;
             String returnCommand = (returnType instanceof IntType || returnType instanceof BoolType) ? "ireturn" :
                     "areturn";
             commands.add(returnCommand);
@@ -337,8 +365,11 @@ public class CodeGenerator extends Visitor<String> {
     @Override
     public String visit(BinaryExpression binaryExpression){
         ArrayList<String> commands = new ArrayList<>();
+        this.idType = binaryExpression.getFirstOperand().accept(typeChecker);
         commands.add(binaryExpression.getFirstOperand().accept(this));
+        this.idType = binaryExpression.getSecondOperand().accept(typeChecker);
         commands.add(binaryExpression.getSecondOperand().accept(this));
+        this.idType = null ;
         commands.addAll(getBinaryOperatorCommands(binaryExpression.getOperator()));
         //TODO
         return String.join("\n",commands);
@@ -346,7 +377,9 @@ public class CodeGenerator extends Visitor<String> {
     @Override
     public String visit(UnaryExpression unaryExpression){
         ArrayList<String> commands = new ArrayList<>();
+        this.idType = unaryExpression.getExpression().accept(typeChecker);
         commands.add(unaryExpression.getExpression().accept(this));
+        this.idType = null;
         switch (unaryExpression.getOperator()){
             case INC -> {
                 commands.add("ldc 1");
@@ -373,8 +406,13 @@ public class CodeGenerator extends Visitor<String> {
         ArrayList commands = new ArrayList<>();
         String idName = identifier.getName();
         int index = slotOf(idName);
+        String loader ;
+        if (this.idType instanceof IntType || this.idType instanceof BoolType)
+            loader = "iload ";
+        else
+            loader = "aload ";
 
-        commands.add("aload " + index);
+        commands.add(loader + index);
         return String.join("\n",commands);
     }
     @Override
@@ -388,7 +426,7 @@ public class CodeGenerator extends Visitor<String> {
 
         commands.add(loopStart + ":");
         for (Statement statement : loopDoStatement.getLoopBodyStmts())
-            commands.add(statement.accept(this));
+            commands.add(statement.accept(this));//TODO: remember idType my cause bugs;
         commands.add("goto " + loopStart);
         commands.add(afterLoop + ":");
 
@@ -432,7 +470,9 @@ public class CodeGenerator extends Visitor<String> {
     public String visit(LenStatement lenStatement){
         ArrayList<String> commands = new ArrayList<>();
         Type type = lenStatement.getExpression().accept(typeChecker);
+        this.idType = type;
         commands.add(lenStatement.getExpression().accept(this));
+        this.idType = null;
         if (type instanceof StringType)
             commands.add("invokevirtual java/lang/String/length()I");
         else
@@ -443,7 +483,9 @@ public class CodeGenerator extends Visitor<String> {
     @Override
     public String visit(ChopStatement chopStatement){
         ArrayList<String> commands = new ArrayList<>();
+        this.idType = chopStatement.getChopExpression().accept(typeChecker);
         String reference = chopStatement.getChopExpression().accept(this);
+        this.idType = null;
         commands.add(reference);
         commands.add("ldc 0");
         commands.add(reference);
@@ -486,7 +528,9 @@ public class CodeGenerator extends Visitor<String> {
         commands.add("invokespecial java/util/ArrayList/<init>()V");
 
         for (Expression expression : listValue.getElements()){
+            this.idType = expression.accept(typeChecker);
             commands.add(expression.accept(this));
+            this.idType = null;
             commands.add("dup");
             if (invoker != null)
                 commands.add(invoker);
