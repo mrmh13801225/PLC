@@ -406,8 +406,15 @@ public class CodeGenerator extends Visitor<String> {
     }
     @Override
     public String visit(LenStatement lenStatement){
+        ArrayList<String> commands = new ArrayList<>();
+        Type type = lenStatement.getExpression().accept(typeChecker);
+        commands.add(lenStatement.getExpression().accept(this));
+        if (type instanceof StringType)
+            commands.add("invokevirtual java/lang/String/length()I");
+        else
+            commands.add("invokevirtual java/util/ArrayList/size()I");
         //TODO
-        return null;
+        return String.join("\n",commands);
     }
     @Override
     public String visit(ChopStatement chopStatement){
@@ -432,7 +439,7 @@ public class CodeGenerator extends Visitor<String> {
         else if (listType.getType() instanceof BoolType)
             return "invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;\n";
         else
-            return "";
+            return null;
     }
     @Override
     public String visit(ListValue listValue){
@@ -446,8 +453,9 @@ public class CodeGenerator extends Visitor<String> {
 
         for (Expression expression : listValue.getElements()){
             commands.append(expression.accept(this));
-            commands.append("dup\n");
-            commands.append(invoker);
+            //commands.append("dup\n");
+            if (invoker != null)
+                commands.append(invoker);
             commands.append("invokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z\n");
             commands.append("pop\n");
         }
