@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7e33c42e-e91a-485a-b25f-9e990edd8202" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../CA4/samples/sample1.fl" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/samples/sample1.fl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/FunctionCraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/FunctionCraft.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/Program.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/Program.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/Declaration.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/Declaration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/FunctionDeclaration.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/FunctionDeclaration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/MainDeclaration.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/MainDeclaration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/PatternDeclaration.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/PatternDeclaration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/VarDeclaration.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/declaration/VarDeclaration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/AccessExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/AccessExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/AppendExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/AppendExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/BinaryExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/BinaryExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/ChompStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/ChompStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/ChopStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/ChopStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/Expression.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/Expression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/Identifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/Identifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/LambdaExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/LambdaExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/LenStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/LenStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/MatchPatternStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/MatchPatternStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/RangeExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/RangeExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/RangeType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/RangeType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/UnaryExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/UnaryExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/operators/BinaryOperator.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/operators/BinaryOperator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/operators/UnaryOperator.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/operators/UnaryOperator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/FunctionPointer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/FunctionPointer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/ListValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/ListValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/Value.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/Value.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/primitive/BoolValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/primitive/BoolValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/primitive/FloatValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/primitive/FloatValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/primitive/IntValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/primitive/IntValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/primitive/StringValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/expression/value/primitive/StringValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/AssignOperator.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/AssignOperator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/AssignStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/AssignStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/BreakStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/BreakStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/ExpressionStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/ExpressionStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/ForStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/ForStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/IfStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/IfStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/LoopDoStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/LoopDoStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/NextStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/NextStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/PushStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/PushStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/PutStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/PutStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/ReturnStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/ReturnStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/Statement.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/nodes/statement/Statement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/type/FptrType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/type/FptrType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/type/ListType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/type/ListType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/type/NoType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/type/NoType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/type/Type.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/type/Type.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/type/primitiveType/BoolType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/type/primitiveType/BoolType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/type/primitiveType/FloatType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/type/primitiveType/FloatType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/type/primitiveType/IntType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/type/primitiveType/IntType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/ast/type/primitiveType/StringType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/ast/type/primitiveType/StringType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/CompileError.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/CompileError.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/AccessIndexIsNotInt.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/AccessIndexIsNotInt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/AppendTypesMisMatch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/AppendTypesMisMatch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/CannotBePushed.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/CannotBePushed.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/ChompArgumentTypeMisMatch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/ChompArgumentTypeMisMatch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/ChopArgumentTypeMisMatch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/ChopArgumentTypeMisMatch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/ConditionIsNotBool.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/ConditionIsNotBool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/FunctionInconsistentReturnTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/FunctionInconsistentReturnTypes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotAppendable.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotAppendable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotCallable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotIndexable.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotIndexable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotIterable.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotIterable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotMatchable.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotMatchable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotPrintable.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/IsNotPrintable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/LenArgumentTypeMisMatch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/LenArgumentTypeMisMatch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/ListElementsInconsistentType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/ListElementsInconsistentType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/NonSameOperands.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/NonSameOperands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/PatternInconsistentReturnTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/PatternInconsistentReturnTypes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/PushArgumentsTypesMisMatch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/PushArgumentsTypesMisMatch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/RangeValuesMisMatch.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/RangeValuesMisMatch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/UnsupportedOperandType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/compileError/typeErrors/UnsupportedOperandType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/grammar/FunctionCraft.g4" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/grammar/FunctionCraft.g4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/SymbolTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/SymbolTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/exceptions/ItemAlreadyExists.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/exceptions/ItemAlreadyExists.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/exceptions/ItemNotFound.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/exceptions/ItemNotFound.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/item/FunctionItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/item/FunctionItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/item/PatternItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/item/PatternItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/item/SymbolTableItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/item/SymbolTableItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/item/VarItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/item/VarItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/utils/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/utils/Graph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/symbolTable/utils/Stack.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/symbolTable/utils/Stack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/visitor/IVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/visitor/IVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/visitor/Visitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/visitor/Visitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/visitor/astPrinter/AstPrinter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/visitor/codeGenerator/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/visitor/codeGenerator/CodeGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/main/visitor/type/TypeChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/main/visitor/type/TypeChecker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftBaseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftBaseListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftBaseVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftBaseVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftLexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftLexer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CA4/src/parsers/FunctionCraftVisitor.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2i3iv6kYygqqqSteQeDNpBksLXX" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.FunctionCraft.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.Unnamed.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "fa5e8734",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "E:/PLC/CA4",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Application.FunctionCraft">
+    <configuration name="FunctionCraft" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="main.FunctionCraft" />
+      <module name="Phase4Template" />
+      <option name="PROGRAM_PARAMETERS" value="samples/sample1.fl" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="Phase4Template" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7e33c42e-e91a-485a-b25f-9e990edd8202" name="Changes" comment="" />
+      <created>1718725889095</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1718725889095</updated>
+      <workItem from="1718725890185" duration="10208000" />
+      <workItem from="1718780118762" duration="38478000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.j" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java</url>
+          <line>462</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java</url>
+          <line>235</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java</url>
+          <line>279</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/visitor/codeGenerator/CodeGenerator.java</url>
+          <line>182</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="main.symbolTable.item.FunctionItem" memberName="argumentTypes" />
+      </pinned-members>
+    </pin-to-top-manager>
+  </component>
+</project>
